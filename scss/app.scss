@@ -1,48 +1,55 @@
-// IMPORTS
-// Google fonts
-@import url('https://fonts.googleapis.com/css?family=Racing+Sans+One');
-
-// MAIN VARS
-
-// Colour vars
-$colour-canvas: #1B6877;
-$colour-accent1: #EB7243;
-$colour-accent2: #AD860E;
-$colour-darkgrey: #333333;
-$colour-lightgrey: #CECECE;
-$btn-text: #0B3E48;
-
-// Font vars
-$base-font-size: 10px;
-$font-stack-1: Arial;
-$font-stack-2: 'Racing Sans One', cursive;
-
-
-// END OF MAIN VARS
-
-* {
-    border: red 1px solid;
-}
+@import "./modules/vars";
+@import "./partials/set-timer";
 
 body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     align-items: center;
+    justify-content: stretch;
     flex-wrap: nowrap;
     font-size: $base-font-size;
     height: 100vh;
     background-color: $colour-canvas;
 }
 
-h1 {
-    font-size: 64px;
-    font-family: $font-stack-2;
+@mixin column-wrapper {
+    flex: 1 1 auto;
+    text-align: center;
+    width: 100vw;
+}
+
+header {
+    @include column-wrapper;
+    h1 {
+    font-size: 6.4em;
+    font-family: $font-stack-1;
     color: $colour-accent2;
     text-shadow: 0px 4px 4px rgba(190,53,69,0.25);
     letter-spacing: 8px;
+    }
+}
+
+main {
+    @include column-wrapper;
+    font-family: $font-stack-1;
+}
+
+footer {
+    width: 100vw;
+    background-color: darken($colour-canvas, 5%);
+    font-size: 1.2em;
+}
+
+.ctrl-panel {
+    display: inline-flex;
+    flex-flow: row wrap;
+    align-items: stretch;
+    justify-content: center;
+    width: 100%;
 }
 
 .reset {
     width: 5em;
 }
+

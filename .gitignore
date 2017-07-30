@@ -4,6 +4,10 @@
 **/css
 /.sass-cache
 /js/vendor/
+tile.png
+apple-touch-icon.png
+favicon.ico
+tile-wide.png
 
 # Compiled source #
 ###################
@@ -42,3 +46,4 @@
 .Trashes
 ehthumbs.db
 Thumbs.db
+

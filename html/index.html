@@ -26,12 +26,45 @@
         </header>
         <!-- FLEX CHILD OF BODY -->
         <main>
-            <aside class="set-timer work-for">
-                <h3>Work for</h3>
-            </aside>
-            <aside class="set-timer break-for">
-                <h3>Break for</h3>
-            </aside>
+            <section class="ctrl-panel">
+                <aside class="set-timer work-for">
+                    <h3>Work for</h3>
+                    <div>
+                        <div class="time-col-titles row">
+                            <div>mins</div>
+                            <div class="spacer"> </div>
+                            <div>secs</div>
+                        </div>
+                        <div>22:00</div>
+                        <div class="btn-row row">
+                            <div>+</div>
+                            <div>-</div>
+                            <div class="spacer"></div>
+                            <div>+</div>
+                            <div>-</div>
+                        </div>
+                        <div class="btn-row row">
+                            <div>5</div>
+                            <div>10</div>
+                            <div>
+                                <object class="reset set-timer-reset" type="image/svg+xml" data="../assets/reset.svg">
+                R
+            </object>
+                            </div>
+                    </div>
+                    </div>
+                </aside>
+                <aside class="set-timer break-for">
+                  <h3>Break for</h3>
+                  <div>
+                        <div class="time-col-titles">mins</div>
+                        <div>22:00</div>
+                        <div>+-</div>
+                        <div>5</div>
+                    </div>
+                </aside>
+            </section>
+            
             <div class="btn main-btn">Start</div>
             <object class="reset main-reset" type="image/svg+xml" data="../assets/reset.svg">
                 Reset
