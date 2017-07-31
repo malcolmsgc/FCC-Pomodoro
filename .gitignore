@@ -8,6 +8,7 @@ tile.png
 apple-touch-icon.png
 favicon.ico
 tile-wide.png
+/node_modules/
 
 # Compiled source #
 ###################

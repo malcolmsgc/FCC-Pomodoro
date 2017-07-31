@@ -17,28 +17,50 @@
     div {
         font-family: $font-stack-1;
     }
-    .time-col-titles > * {
-        font-family: Arial, Helvetica, sans-serif;
-        font-size: 2em;
-        color: #fff;
-        letter-spacing: 0.08em;
-        &.spacer {
-            background-color: $colour-lightgrey;
-        }
-    }
     .row > div {
         display: inline-block;
+        padding: 0 0.2em;
     }
-    .btn-row > *{
+    .btn-row > * {
         background-color: $colour-darkgrey;
         color: #fff;
         font-size: 4.8em;
-        padding: 0.15em;
     }
-
-    .set-timer-reset {
-        max-width: 0.6em;
-        stroke: #fff;
+    .time-set {
+        background-color: $colour-lightgrey;
+        font-size: 4.8em;
+        color: #000;
     }
-
 }
+
+.time-col-titles {
+    // background-color: $colour-lightgrey;
+    div {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 2.2em;
+    font-weight: 100;
+    color: #fff;
+    letter-spacing: 0.08em;
+    background-color: $colour-darkgrey;
+    }
+}
+
+.row {
+    &.crement > * {
+        font-family: Arial, Helvetica, sans-serif;
+    }
+    .spacer {
+        background-color: $colour-lightgrey;
+        min-width: 16px;
+        margin: 0;
+        padding-left: 0;
+        padding-right: 0;
+        &:before {
+            content: "\00a0";
+        }
+    }
+}
+
+.set-timer-reset {
+        max-width: 0.6em;
+    }
