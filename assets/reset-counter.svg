@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="73" height="73" viewBox="0 0 73 73" version="1.1">
+  <g transform="translate(-973 -32)">
+    <g id="reset counter">
+      <g id="Group">
+        <g id="Vector" filter="url(#filter0_d)">
+          <use xlink:href="#path0_stroke" transform="translate(981 36.9481)" fill="#EB7243"/>
+        </g>
+        <g id="Group">
+          <g id="Vector">
+            <use xlink:href="#path1_fill" transform="translate(1018.51 36)" fill="#EB7243"/>
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <defs>
+    <filter id="filter0_d" filterUnits="userSpaceOnUse" x="973" y="32" width="70" height="73" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 255 0"/>
+      <feOffset dx="0" dy="4"/>
+      <feGaussianBlur stdDeviation="2"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.25 0"/>
+      <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow" result="shape"/>
+    </filter>
+    <path id="path0_stroke" d="M50.5034 50.5034L53.3319 47.675 47.675 42.0181 44.8466 44.8466 50.5034 50.5034ZM48.545 15.833L50.603 19.263 57.463 15.147 55.405 11.717 48.545 15.833ZM44.8466 44.8466C35.5087 54.1845 20.3413 54.1845 11.0034 44.8466L5.34657 50.5034C17.8087 62.9655 38.0413 62.9655 50.5034 50.5034L44.8466 44.8466ZM11.0034 44.8466C1.66552 35.5087 1.66552 20.3413 11.0034 11.0034L5.34657 5.34657C-7.11552 17.8087-7.11552 38.0413 5.34657 50.5034L11.0034 44.8466ZM11.0034 11.0034C20.3413 1.66552 35.5087 1.66552 44.8466 11.0034L50.5034 5.34657C38.0413-7.11552 17.8087-7.11552 5.34657 5.34657L11.0034 11.0034ZM44.8466 11.0034C46.3421 12.483 47.4462 13.9929 48.545 15.833L55.405 11.717C54.1038 9.55713 52.4079 7.26702 50.5034 5.34657L44.8466 11.0034Z"/>
+    <path id="path1_fill" d="M22.2674 21.0231L22.2674 1.22305C22.2674 0.123053 20.9674-0.376947 20.1674 0.323053L0.367423 20.1231C-0.432577 20.9231 0.16742 22.2231 1.26742 22.2231L21.0674 22.2231C21.7674 22.2231 22.2674 21.6231 22.2674 21.0231Z"/>
+  </defs>
+</svg>

@@ -31,11 +31,14 @@
     }
     .btn-row > *{
         background-color: $colour-darkgrey;
+        color: #fff;
         font-size: 4.8em;
         padding: 0.15em;
     }
 
     .set-timer-reset {
         max-width: 0.6em;
+        stroke: #fff;
     }
+
 }
