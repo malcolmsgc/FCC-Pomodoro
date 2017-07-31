@@ -4,7 +4,6 @@
 body {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     align-items: center;
     justify-content: stretch;
     flex-wrap: nowrap;
@@ -53,3 +52,12 @@ footer {
     width: 5em;
 }
 
+.main-btn {
+    background-color: $colour-accent1;
+    max-width: max-content;
+    padding: 0.1em;
+    font-size: 4.8em;
+    line-height: 1.1em;
+    color: $btn-text;
+    margin: 0 auto;
+}
