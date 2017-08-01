@@ -15,8 +15,11 @@
         font-family: $font-stack-2;
     }
     > div {
+        /* FLEX STYLES AS CONTAINER */
+        display: flex;
+        flex-flow: column nowrap;
         font-family: $font-stack-1;
-        max-width: 220px;
+        max-width: 23em;
         margin: 0 auto;
     }
     .row > div {
@@ -38,27 +41,29 @@
 }
 
 .time-col-titles {
-    // background-color: $colour-lightgrey;
-    div {
+    &.row div {
     font-family: Arial, Helvetica, sans-serif;
     font-size: 2.2em;
     font-weight: 100;
     color: #fff;
     letter-spacing: 0.08em;
+    padding: 0.2em;
     background-color: $colour-darkgrey;
-    min-width: 90px;
-    &:first-child {
-        float: left;
+    //min-width: 90px;
+    /* FLEX STYLES AS CONTAINER */
+    flex: 0;
+    &:first-child, &:last-child {
+        flex: 0 1 90px;
         }
-    &:last-child {
-        float: right;
-        }
-    
     }
     
 }
 
 .row {
+    /* FLEX STYLES AS CONTAINER */
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
     &.crement > * {
         font-family: Arial, Helvetica, sans-serif;
         line-height: 1em;
@@ -66,12 +71,15 @@
     div.spacer {
         background-color: $colour-lightgrey;
         min-width: 1.2rem;
-        margin: 0;
+        margin: 0 1px;
         padding-left: 0;
         padding-right: 0;
         &:before {
             content: "\00a0";
         }
+    }
+    &:last-child {
+        margin-top: 1.5em;
     }
 }
 
