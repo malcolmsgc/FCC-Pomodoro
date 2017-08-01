@@ -38,6 +38,12 @@ footer {
     width: 100vw;
     background-color: darken($colour-canvas, 5%);
     font-size: 1.2em;
+    details {
+        padding: 0.5em;
+        p {
+            color: $colour-lightgrey;
+        }
+    }
 }
 
 .ctrl-panel {
