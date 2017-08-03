@@ -1,5 +1,7 @@
 @import "./modules/vars";
+@import "./modules/app-media-sml";
 @import "./partials/set-timer";
+@import "./partials/count-down";
 
 body {
     display: flex;
@@ -60,10 +62,17 @@ footer {
 
 .main-btn {
     background-color: $colour-accent1;
-    max-width: max-content;
+    max-width: 5em;
+    min-width: max-content;
     padding: 0.1em;
     font-size: 4.8em;
     line-height: 1.1em;
     color: $btn-text;
     margin: 0 auto;
+    box-shadow: -2px -2px 4px rgba(#000, 0.25) inset, 
+                2px 2px 4px rgba(#fff, 0.35) inset;
+}
+
+@media (max-width: 593px) {
+ @include phoneheader;
 }

@@ -1,0 +1,12 @@
+@import "./vars";
+
+@mixin phoneheader {
+    header {
+        background-color: $btn-text;
+        h1 {
+        color: $colour-accent2;
+        font-size: 3em;
+        }
+    }
+}
+    
