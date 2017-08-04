@@ -7,7 +7,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: stretch;
+    justify-content: space-between;
     flex-wrap: nowrap;
     font-size: $base-font-size;
     height: 100vh;
@@ -28,6 +28,7 @@ header {
     color: $colour-accent2;
     text-shadow: 0px 4px 4px rgba(190,53,69,0.25);
     letter-spacing: 8px;
+    margin: 0.3em 0 0 0;
     }
 }
 
@@ -58,6 +59,9 @@ footer {
 
 .reset {
     width: 5em;
+    &.main-reset {
+        margin: 1.5em;
+    }
 }
 
 .main-btn {
