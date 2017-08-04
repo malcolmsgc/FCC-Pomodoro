@@ -16,7 +16,6 @@ body {
 }
 
 @mixin column-wrapper {
-    flex: 1 1 auto;
     text-align: center;
     width: 100vw;
 }
@@ -35,6 +34,7 @@ header {
 
 main {
     @include column-wrapper;
+    flex: 1 1 auto;
     font-family: $font-stack-1;
 }
 
@@ -67,4 +67,5 @@ footer {
 
 @media (max-width: 593px) {
  @include phoneheader;
+ @include set-time-ctrls-phone;
 }

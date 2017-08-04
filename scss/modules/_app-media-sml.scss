@@ -6,6 +6,26 @@
         h1 {
         color: $colour-accent2;
         font-size: 3em;
+        max-height: 6em;
+        }
+    }
+}
+
+
+@mixin set-time-ctrls-phone {
+    .set-timer {
+        margin: 1.5em 0 0 0;
+        h3 {
+            font-weight: normal;
+            font-size: 3em;
+        }
+        .btn-row {
+            display: none;
+        }
+        &.open {
+            .btn-row {
+                display: flex;
+            }
         }
     }
 }
