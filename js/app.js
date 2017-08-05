@@ -12,6 +12,8 @@ class CountDownTimer {
     }
 
     startCountDown(secs) {
+        clearInterval(this.timerIntervalID);
+        this.numDisplaySlots = undefined;
         const   now = Date.now(),
                 timeAtEnd = now + (secs * 1000); //convert secs to milliseconds
         this._displayCountDown(secs);
@@ -19,7 +21,7 @@ class CountDownTimer {
             () => {
                 const secsRemaining = Math.round((timeAtEnd - Date.now()) / 1000);
                 if (secsRemaining < 0) {
-                    clearInterval(this.timerIntervalID)
+                    clearInterval(this.timerIntervalID);
                     return;
                 }
                 this._displayCountDown(secsRemaining);
@@ -31,7 +33,7 @@ class CountDownTimer {
         //tie this into UI
         let mins = Math.floor(seconds / 60),
             secs = seconds % 60,
-            padMinsTo = this.numDisplaySlots || padTo;
+            padMinsTo = this.numDisplaySlots || padTo; //takes value of max slots needed for minutes
         //if statement runs on first occasion
         //js allows more than two display slots. UI may or may not support more than 2
         if (mins > 60 && !(this.numDisplaySlots)) {
@@ -64,16 +66,10 @@ class CountDownTimer {
         }
         return num;
     }
-        
 }
 
 /* -------------------------------- */
 /* ENDOF COUNTDOWNTIMER CLASS       */
 /* -------------------------------- */
-
-
-
-
-
 
 const pomodoro = new CountDownTimer();
