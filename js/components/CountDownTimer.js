@@ -1,26 +1,25 @@
-class CountDownTimer() {
+class CountDownTimer {
 
     constructor() {
-        this.countdown; //var used to clear interval
+        this.timerIntervalID; //var used to clear interval
     }
 
     setInterval() {
     }
 
     startCountDown(secs) {
-        console.log({this.countdown});
         const   now = Date.now(),
                 timeAtEnd = now + (secs * 1000); //convert secs to milliseconds
         this.displayCountDown(secs);
-        this.countdown = setInterval(
+        this.timerIntervalID = setInterval(
             () => {
                 const secsRemaining = Math.round((timeAtEnd - Date.now()) / 1000);
                 if (secsRemaining < 0) {
-                clearInterval(countdown)
-                return;
+                    clearInterval(this.timerIntervalID)
+                    return;
+                }
                 console.log(secsRemaining);
                 }
-            }
         , 1000) //run every second to update display
     }
 
@@ -30,3 +29,5 @@ class CountDownTimer() {
         return secs;
     }
 }
+
+export default CountDownTimer;
