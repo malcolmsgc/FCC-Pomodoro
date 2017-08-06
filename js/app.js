@@ -25,12 +25,24 @@ class CountDownTimer {
 
     startCountDown(secs) {
         clearInterval(this.timerIntervalID);
+        // destructure node refs into default vars
+        // and pull in nodes held on class object
+        // as arrays of nodes
+        // to pass down to display and display helper functions
         const nodeRefs = this._setNodeRefs();
-        
+        const   [timerRef, minsRef, secsRef] = nodeRefs,
+                minsNodes = this[minsRef],
+                secsNodes = this[secsRef],
+                getSlotFrames = (nodeArray) => nodeArray.map( 
+                                    (node) => [node.childNodes[0], node.childNodes[1]]
+                                ),
+                minsFrames = getSlotFrames(minsNodes),                
+                secsFrames = getSlotFrames(secsNodes),                
+                allFrames = {minsFrames, secsFrames};
         this.numDisplaySlots = undefined;
         const   now = Date.now(),
                 timeAtEnd = now + (secs * 1000); //convert secs to milliseconds
-        this._displayCountDown(secs, {nodeRefs});
+        this._displayCountDown(secs, {nodeRefs: allFrames});
         this.timerIntervalID = setInterval(
             () => {
                 const secsRemaining = Math.round((timeAtEnd - Date.now()) / 1000);
@@ -38,7 +50,7 @@ class CountDownTimer {
                     clearInterval(this.timerIntervalID);
                     return;
                 }
-                this._displayCountDown(secsRemaining, {nodeRefs});
+                this._displayCountDown(secsRemaining, {nodeRefs: allFrames});
                 }
         , 1000) //run every second to update display
     }
@@ -85,31 +97,28 @@ class CountDownTimer {
         return num;
     }
 
-    _handleSlots(timeDigitObj = {}, nodeRefs) {
-        // destructure node refs into default vars
-        // and pull in nodes held on class object
-        // as arrays of nodes
-        const   [timerRef, minsRef, secsRef] = nodeRefs,
-                timerNodes = this[timerRef],
-                minsNodes = this[minsRef],
-                secsNodes = this[secsRef];
+    _handleSlots(timeDigitObj = {}, framesObj = {}) {
         //split time strings into arrays
         let { mins, secs } = timeDigitObj;
         mins = mins.split('');
         secs = secs.split('');
         //get nodes
-        const callback = (nodeArray, timeArray) => { nodeArray.forEach( 
-            (node, i) => {
-                let time = timeArray[i];
-                let timeSlotCurrent = node.childNodes[0];
-                let timeSlotNew = node.childNodes[1];
-                console.log({timeSlotCurrent, time})
-                timeSlotCurrent.textContent = time;
-            }
-        )};
+        let { minsFrames, secsFrames } = framesObj;
+        console.log({ minsFrames, secsFrames });
+        // const callback = (nodeArray, timeArray) => { nodeArray.forEach( 
+        //     (node, i) => {
+        //         let currenttime = timeArray[i];
+        //         let newtime = (parseInt(currenttime) - 1).toString();
+        //         newtime = (newtime < 0) ? "9" : newtime;
+        //         let timeSlotCurrent = node.childNodes[0];
+        //         let timeSlotNew = node.childNodes[1];
+        //         timeSlotCurrent.textContent = currenttime;
+        //         timeSlotNew.textContent = newtime;
+        //     }
+        // )};
 
-        callback(secsNodes, secs);
-        callback(minsNodes, mins);
+        // callback(secsNodes, secs);
+        // callback(minsNodes, mins);
        //console.log({secs, secsNodes});
 
 
