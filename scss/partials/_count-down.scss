@@ -11,6 +11,7 @@
     div {
         overflow: hidden;
         max-height: 0.8em;
+        width: 0.8em;
         span {
             transition: transform 0.5s linear;
             display: block;
@@ -19,7 +20,8 @@
         }
     }
     .separator {
-        
+        padding-bottom: 0.065em;
+        width: 0.4em;
         background-color: $colour-darkgrey;
         // border: 1px solid $colour-counternumgrey-mid;
         color: $colour-lightgrey;
