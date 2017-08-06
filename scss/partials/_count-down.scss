@@ -8,22 +8,36 @@
     font-size: 9.6em;
     line-height: 0.8em;
     margin: 2rem 0;
-    span {
-        padding: 0 4px 4px;
+    div {
+        overflow: hidden;
+        max-height: 0.8em;
+        span {
+            transition: transform 0.5s linear;
+            display: block;
+            background-color: transparent; 
+            padding: 0 4px 4px;
+        }
+    }
+    .separator {
+        
         background-color: $colour-darkgrey;
         // border: 1px solid $colour-counternumgrey-mid;
         color: $colour-lightgrey;
         span {
-            display: block;
-            margin-top: -0.1em;
-            background-color: transparent; 
+            transform:translateY(-10%);
         }
     }
     .mins, .secs {
+        padding: 0 4px 4px;
         background-color: $colour-counternum-lightgrey;
         border: 1px solid $colour-counternum-midgrey;
         color: #000;
         box-shadow: inset 0px 1px 6px rgba(#000, 0.5),
                     inset 0px -1px 8px rgba(#000, 0.5)
+    }
+    .end-roll {
+        span {
+            transform: translateY(-100%);
+        }
     }
 }
