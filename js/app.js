@@ -5,7 +5,8 @@ class CountDownTimer {
 
     constructor() {
         this.timerIntervalID; //var used to clear interval
-        this.numDisplaySlots; //used to check how much padding is required
+        this.numDisplaySlots; //used to check how much 0 padding is required
+        this.state = {};
         
     }
 
@@ -22,7 +23,7 @@ class CountDownTimer {
     }
 
 
-
+//to do - esnure nodes are obtained after num of frames for mins is determined
     startCountDown(secs) {
         clearInterval(this.timerIntervalID);
         // destructure node refs into default vars
@@ -98,27 +99,50 @@ class CountDownTimer {
     }
 
     _handleSlots(timeDigitObj = {}, framesObj = {}) {
+        //destructure frames object into vars
+        const { minsFrames, secsFrames } = framesObj;
         //split time strings into arrays
         let { mins, secs } = timeDigitObj;
         mins = mins.split('');
         secs = secs.split('');
-        //get nodes
-        let { minsFrames, secsFrames } = framesObj;
-        console.log({ minsFrames, secsFrames });
-        // const callback = (nodeArray, timeArray) => { nodeArray.forEach( 
-        //     (node, i) => {
-        //         let currenttime = timeArray[i];
-        //         let newtime = (parseInt(currenttime) - 1).toString();
-        //         newtime = (newtime < 0) ? "9" : newtime;
-        //         let timeSlotCurrent = node.childNodes[0];
-        //         let timeSlotNew = node.childNodes[1];
-        //         timeSlotCurrent.textContent = currenttime;
-        //         timeSlotNew.textContent = newtime;
-        //     }
-        // )};
+        //function to populate frames for each node with values 
+        const   populateFrames = (nodeArray, timeArray) => { 
+                    //frames should match time digits being passed in
+                    if (nodeArray.length !== timeArray.length) 
+                        console.error(new Error ('Number of digits does not match number of counter frames'));
+                    //loop through nodes for time category and set values for transition frames
+                    nodeArray.forEach( 
+                    (node, i) => {
+                        let currenttime = timeArray[i];
+                        let newtime = (parseInt(currenttime) - 1).toString();
+                        newtime = (newtime < 0) ? "9" : newtime;
+                        let timeSlotCurrent = node[0];
+                        let timeSlotNew = node[1];
+                        timeSlotCurrent.textContent = currenttime;
+                        timeSlotNew.textContent = newtime;
+                    }
+                )};
+                //TO DO finish function which will take in a trigger value
+                // and transition frames on trigger value (6 for 2nd column of secs, 9 otherwise)
+                // append a child span with next value
+                // and remove first child span
+                //which will hopefully roll the animation
+                // alternative try replacechild, which might retain node refs. 
+        const   transitionFrames = (node, duration, timeDigit, triggerDigit) => {
+                    //switch might work better???
+                    if (triggerDigit) {
+                        if (timeDigit.toString() === triggerDigit.toString()) {
+                    }
+                    else {
+                        node.classList.add(rolling);
+                        setTimeout(() => {node.classList.remove(rolling)}, duration)
+                    }
+                    
 
-        // callback(secsNodes, secs);
-        // callback(minsNodes, mins);
+                    }
+        }
+        populateFrames(secsFrames, secs);
+        populateFrames(minsFrames, mins);
        //console.log({secs, secsNodes});
 
 
