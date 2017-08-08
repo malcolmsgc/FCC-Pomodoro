@@ -3,11 +3,10 @@
 
 class CountDownTimer {
 
-    constructor() {
+    constructor(settings = {rolling: true}) {
         this.timerIntervalID; //var used to clear interval
         this.numDisplaySlots; //used to check how much 0 padding is required
-        this.state = {};
-        
+        this.settings = settings;
     }
 
     _setNodeRefs(selectorsObj = { 
@@ -98,15 +97,29 @@ class CountDownTimer {
         return num;
     }
 
-    _handleSlots(timeDigitObj = {}, framesObj = {}) {
+    _handleSlots(timeDigitObj = {}, framesObj = {}, rolling = this.settings.rolling) {
         //destructure frames object into vars
         const { minsFrames, secsFrames } = framesObj;
+        console.log({ minsFrames, secsFrames });
         //split time strings into arrays
         let { mins, secs } = timeDigitObj;
         mins = mins.split('');
         secs = secs.split('');
-        //function to populate frames for each node with values 
-        const   populateFrames = (nodeArray, timeArray) => { 
+        if (rolling) {
+            //TO DO finish function which will take in a trigger value
+            // and transition frames on trigger value (6 for 2nd column of secs, 9 otherwise)
+            this._populateFrames(secsFrames, secs, true);
+            this._populateFrames(minsFrames, mins, true);
+        }
+        else {
+            this._populateFrames(secsFrames, secs, false);
+            this._populateFrames(minsFrames, mins, false);
+        }
+       //console.log({secs, secsNodes});
+    }
+
+    // rolling is boolean to allow setting of rolling counter. May need to be shut off if it kills perf.
+    _populateFrames (nodeArray, timeArray, rolling) { 
                     //frames should match time digits being passed in
                     if (nodeArray.length !== timeArray.length) 
                         console.error(new Error ('Number of digits does not match number of counter frames'));
@@ -114,21 +127,17 @@ class CountDownTimer {
                     nodeArray.forEach( 
                     (node, i) => {
                         let currenttime = timeArray[i];
-                        let newtime = (parseInt(currenttime) - 1).toString();
-                        newtime = (newtime < 0) ? "9" : newtime;
-                        let timeSlotCurrent = node[0];
-                        let timeSlotNew = node[1];
-                        timeSlotCurrent.textContent = currenttime;
-                        timeSlotNew.textContent = newtime;
+                        node[0].textContent = currenttime;
+                        if (rolling) {
+                            let newtime = (parseInt(currenttime) - 1).toString();
+                            newtime = (newtime < 0) ? "9" : newtime;
+                            node[1].textContent = newtime;
+                        }
                     }
-                )};
-                //TO DO finish function which will take in a trigger value
-                // and transition frames on trigger value (6 for 2nd column of secs, 9 otherwise)
-                // append a child span with next value
-                // and remove first child span
-                //which will hopefully roll the animation
-                // alternative try replacechild, which might retain node refs. 
-        const   transitionFrames = (node, duration, timeDigit, triggerDigit) => {
+                );
+    }
+//recursion to pass trigger down a chain?
+    _transitionFrames (node, duration, timeDigit, triggerDigit) {
                     //switch might work better???
                     if (triggerDigit) {
                         if (timeDigit.toString() === triggerDigit.toString()) {
@@ -141,16 +150,11 @@ class CountDownTimer {
 
                     }
         }
-        populateFrames(secsFrames, secs);
-        populateFrames(minsFrames, mins);
-       //console.log({secs, secsNodes});
 
-
-    }
 }
 
 /* -------------------------------- */
 /* ENDOF COUNTDOWNTIMER CLASS       */
 /* -------------------------------- */
 
-const pomodoro = new CountDownTimer();
+const pomodoro = new CountDownTimer({rolling: false});

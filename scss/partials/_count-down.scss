@@ -38,8 +38,6 @@
                     inset 0px -1px 8px rgba(#000, 0.5)
     }
     .rolling {
-        span {
-            transform: translateY(-100%);
-        }
+        transform: translateY(-100%);
     }
 }
