@@ -107,16 +107,9 @@ class CountDownTimer {
         let { mins, secs } = timeDigitObj;
         mins = mins.split('');
         secs = secs.split('');
-        if (rolling) {
-            //TO DO finish function which will take in a trigger value
-            // and transition frames on trigger value (6 for 2nd column of secs, 9 otherwise)
-            this._populateFrames(secsFrames, secs, true);
-            this._populateFrames(minsFrames, mins, true);
-        }
-        else {
-            this._populateFrames(secsFrames, secs, false);
-            this._populateFrames(minsFrames, mins, false);
-        }
+        // NB rolling in the following lines sets the flag to true or false
+        this._populateFrames(secsFrames, secs, rolling);
+        this._populateFrames(minsFrames, mins, rolling);
        //console.log({secs, secsNodes});
     }
 
@@ -155,7 +148,7 @@ class CountDownTimer {
         const onesFramesParent = document.querySelector(".count-down .secs:last-child");
         onesFrames.forEach(
             (node, i) => {
-                debugger;
+                //debugger;
                 node.classList.add('rolling');
                 console.log(top, bottom);
             }
