@@ -78,7 +78,7 @@ class CountDownTimer {
         }
         secs = this._padNum(secs, padTo);
         mins = this._padNum(mins, padMinsTo);
-        console.log({mins, secs});
+        console.log({mins, secs, nodeRefs});
         this._handleSlots({mins, secs}, nodeRefs);
         if (returnAsNum) {
             secs = parseFloat(secs);
@@ -97,6 +97,8 @@ class CountDownTimer {
         return num;
     }
 
+    // rolling is boolean to allow setting of rolling counter. 
+    // Takes default from settings obj passed into constructor    
     _handleSlots(timeDigitObj = {}, framesObj = {}, rolling = this.settings.rolling) {
         //destructure frames object into vars
         const { minsFrames, secsFrames } = framesObj;
@@ -118,6 +120,8 @@ class CountDownTimer {
        //console.log({secs, secsNodes});
     }
 
+    //TO DO refactor passing of noderefs - a bit superfluous if it needs to be recalculated every second
+    //AND it is bombing clock on roll
     // rolling is boolean to allow setting of rolling counter. May need to be shut off if it kills perf.
     _populateFrames (nodeArray, timeArray, rolling) { 
                     //frames should match time digits being passed in
@@ -125,31 +129,47 @@ class CountDownTimer {
                         console.error(new Error ('Number of digits does not match number of counter frames'));
                     //loop through nodes for time category and set values for transition frames
                     nodeArray.forEach( 
-                    (node, i) => {
+                    (node, i, arr) => {
+                        let newtime;
                         let currenttime = timeArray[i];
                         node[0].textContent = currenttime;
                         if (rolling) {
-                            let newtime = (parseInt(currenttime) - 1).toString();
+                            newtime = (parseInt(currenttime) - 1).toString();
                             newtime = (newtime < 0) ? "9" : newtime;
                             node[1].textContent = newtime;
+                            console.log(i);
+                            this._transitionFrames(currenttime, newtime);
                         }
+                        
                     }
                 );
     }
-//recursion to pass trigger down a chain?
-    _transitionFrames (node, duration, timeDigit, triggerDigit) {
-                    //switch might work better???
-                    if (triggerDigit) {
-                        if (timeDigit.toString() === triggerDigit.toString()) {
-                    }
-                    else {
-                        node.classList.add(rolling);
-                        setTimeout(() => {node.classList.remove(rolling)}, duration)
-                    }
-                    
 
-                    }
-        }
+//recursion to pass trigger down a chain?
+    _transitionFrames (top, bottom) {
+        //let top, bottom;
+        const newFrames = `<span>${top}</span><span>${bottom}</span>`;
+        //handle seconds
+            //grab nodes
+        const onesFrames = Array.from(document.querySelectorAll(".count-down .secs:last-child span"));
+        const onesFramesParent = document.querySelector(".count-down .secs:last-child");
+        onesFrames.forEach(
+            (node, i) => {
+                debugger;
+                node.classList.add('rolling');
+                console.log(top, bottom);
+            }
+        );
+        setTimeout( () => { onesFramesParent.innerHTML = (newFrames); }, 500 );
+        //handle other scenarios
+        // if (node[0].textContent === "0") {
+
+        // }
+        // else {
+        //     node.classList.add(rolling);
+        //     setTimeout(() => {node.classList.remove(rolling)}, duration)
+        // }
+    }
 
 }
 
@@ -157,4 +177,4 @@ class CountDownTimer {
 /* ENDOF COUNTDOWNTIMER CLASS       */
 /* -------------------------------- */
 
-const pomodoro = new CountDownTimer({rolling: false});
+const pomodoro = new CountDownTimer({rolling: true});
