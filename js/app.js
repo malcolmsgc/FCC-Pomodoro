@@ -18,7 +18,6 @@ class CountDownTimer {
             (key) => Array.from(document.querySelectorAll(selectorsObj[key]))
         );
         [this.minsNodes, this.secsNodes] = nodeArray;
-        console.log(nodeArray);
         return nodeArray;
     }
 
@@ -92,13 +91,33 @@ class CountDownTimer {
     // rolling is boolean to allow setting of rolling counter. 
     // Takes default from settings obj passed into constructor    
     _handleSlots(timeDigitObj = {}) {
-        //destructure frames object into vars
-        const   minsFrames = this.minsNodes,
-                secsFrames = this.secsNodes;
+        let minsFrames, secsFrames;
+        if (this.settings.rolling) {
+                // helper function to collect frames that sit in
+                // parent div that is visible counter slot
+                const getSlotFrames = (nodeArray) => nodeArray.map( 
+                (node) => [node.childNodes[0], node.childNodes[1]]
+            )
+            // add parent nodes to array
+            const nodeRefs = this._setNodeRefs(
+                // arg is object with selectors for querySelectorAll
+                {
+                minsRef: ".count-down .mins",
+                secsRef: ".count-down .secs"
+            })
+            console.log(nodeRefs);
+            const   [minsParentNodes, secsParentNodes] = nodeRefs;
+            minsFrames = getSlotFrames(minsParentNodes).reverse(),                
+            secsFrames = getSlotFrames(secsParentNodes).reverse(); 
+        }
+        else {
+            minsFrames = this.minsNodes.reverse(),
+            secsFrames = this.secsNodes.reverse();
+        }
         //split time strings into arrays
         let { mins, secs } = timeDigitObj;
-        mins = mins.split('');
-        secs = secs.split('');
+        mins = mins.split('').reverse();
+        secs = secs.split('').reverse();
         console.log({ secsFrames, secs });
         this._populateFrames(secsFrames, secs);
         this._populateFrames(minsFrames, mins);
@@ -107,43 +126,48 @@ class CountDownTimer {
 
     _populateFrames (nodeArray, timeArray) { 
         const rolling = this.settings.rolling;
+        let currenttime, newtime;
+        console.log(nodeArray);
         //frames should match time digits being passed in
         if (nodeArray.length !== timeArray.length) 
             console.error(new Error ('Number of digits does not match number of counter frames'));
         //loop through nodes for time category and set values for transition frames
         nodeArray.forEach( 
         (node, i) => {
-            let currenttime = timeArray[i];
+            currenttime = timeArray[i];
             node.textContent = currenttime;
             if (rolling) {
+                //debugger;
                 node[0].textContent = currenttime;
-                let newtime = (parseInt(currenttime) - 1).toString();
-                newtime = (newtime < 0) ? "9" : newtime;
+                newtime = (parseInt(currenttime) - 1);
+                newtime = (newtime < 0) ? "9" : newtime.toString();
                 node[1].textContent = newtime;
                 console.log(i);
-                this._transitionFrames(currenttime, newtime);
             }
-            
-        }
-    );
+        });
+        //debugger;
+        if (rolling) this._transitionFrames(currenttime, newtime, this.secsNodes[1], nodeArray[1]);
     }
 
 //recursion to pass trigger down a chain?
-    _transitionFrames (top, bottom) {
-        //let top, bottom;
+    _transitionFrames (top, bottom, slotRef, frames) {
+        console.log(slotRef);
+        console.log(frames);
+        console.log({top, bottom});
         const newFrames = `<span>${top}</span><span>${bottom}</span>`;
         //handle seconds
             //grab nodes
-        const onesFrames = Array.from(document.querySelectorAll(".count-down .secs:last-child span"));
-        const onesFramesParent = document.querySelector(".count-down .secs:last-child");
-        onesFrames.forEach(
-            (node, i) => {
-                //debugger;
-                node.classList.add('rolling');
-                console.log(top, bottom);
-            }
-        );
-        setTimeout( () => { onesFramesParent.innerHTML = (newFrames); }, 500 );
+
+console.log('roll');
+
+        // frames.forEach(
+        //     (node, i) => {
+        //         //debugger;
+        //         node.classList.add('rolling');
+        //         console.log(top, bottom);
+        //     }
+        // );
+        setTimeout( () => { console.log({top, bottom}); slotRef.innerHTML = (newFrames); }, 500 );
         //handle other scenarios
         // if (node[0].textContent === "0") {
 
@@ -160,4 +184,4 @@ class CountDownTimer {
 /* ENDOF COUNTDOWNTIMER CLASS       */
 /* -------------------------------- */
 
-const pomodoro = new CountDownTimer({rolling: false});
+const pomodoro = new CountDownTimer({rolling: true});
