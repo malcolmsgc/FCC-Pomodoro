@@ -92,11 +92,15 @@ class CountDownTimer {
     // Takes default from settings obj passed into constructor    
     _handleSlots(timeDigitObj = {}) {
         let minsFrames, secsFrames;
+        //split time strings into arrays
+        let { mins, secs } = timeDigitObj;
+        mins = mins.split('').reverse();
+        secs = secs.split('').reverse();
         if (this.settings.rolling) {
                 // helper function to collect frames that sit in
                 // parent div that is visible counter slot
                 const getSlotFrames = (nodeArray) => nodeArray.map( 
-                (node) => [node.childNodes[0], node.childNodes[1]]
+                (node) => [].concat(node.childNodes[0], node.childNodes[1])
             )
             // add parent nodes to array
             const nodeRefs = this._setNodeRefs(
@@ -105,69 +109,105 @@ class CountDownTimer {
                 minsRef: ".count-down .mins",
                 secsRef: ".count-down .secs"
             })
-            console.log(nodeRefs);
             const   [minsParentNodes, secsParentNodes] = nodeRefs;
             minsFrames = getSlotFrames(minsParentNodes).reverse(),                
             secsFrames = getSlotFrames(secsParentNodes).reverse(); 
         }
         else {
-            minsFrames = this.minsNodes.reverse(),
-            secsFrames = this.secsNodes.reverse();
+            minsFrames = [...this.minsNodes.reverse()],
+            secsFrames = [...this.secsNodes.reverse()];
         }
-        //split time strings into arrays
-        let { mins, secs } = timeDigitObj;
-        mins = mins.split('').reverse();
-        secs = secs.split('').reverse();
-        console.log({ secsFrames, secs });
         this._populateFrames(secsFrames, secs);
-        this._populateFrames(minsFrames, mins);
+        //this._populateFrames(minsFrames, mins);
         return;
     }
 
+    // _populateFrames (nodeArray, timeArray) { 
+    //     const timeMap = [];
+    //     const rolling = this.settings.rolling;
+    //     let currenttime, newtime;
+    //     //frames should match time digits being passed in
+    //     if (nodeArray.length !== timeArray.length) 
+    //         console.error(new Error ('Number of digits does not match number of counter frames'));
+    //     //loop through nodes for time category and set values for transition frames
+    //     nodeArray.forEach( 
+    //     (node, i) => {
+    //         currenttime = timeArray[i];
+    //         node.textContent = currenttime;
+    //         if (rolling) {
+    //             //debugger;
+    //             node[0].textContent = currenttime;
+    //             newtime = parseInt(currenttime) - 1;
+    //             newtime = (newtime < 0) ? "9" : newtime.toString();
+    //             node[1].textContent = newtime;
+    //             console.log(i);
+    //             timeMap.push([currenttime, newtime]);
+    //         }
+    //     });
+    //     //debugger;
+    //     console.log(timeMap)
+    //     if (rolling) this._transitionFrames(currenttime, newtime, this.secsNodes[1], nodeArray[1]);
+    // }
+
+
     _populateFrames (nodeArray, timeArray) { 
+        const timeMap = [];
+        const secs1Frames = [...nodeArray[0]];
         const rolling = this.settings.rolling;
-        let currenttime, newtime;
-        console.log(nodeArray);
+        let currenttime, newtimeTop, newtimeBottom;
         //frames should match time digits being passed in
         if (nodeArray.length !== timeArray.length) 
             console.error(new Error ('Number of digits does not match number of counter frames'));
-        //loop through nodes for time category and set values for transition frames
-        nodeArray.forEach( 
-        (node, i) => {
-            currenttime = timeArray[i];
-            node.textContent = currenttime;
+        //handle seconds ones slot
+            //
             if (rolling) {
-                //debugger;
-                node[0].textContent = currenttime;
-                newtime = (parseInt(currenttime) - 1);
-                newtime = (newtime < 0) ? "9" : newtime.toString();
-                node[1].textContent = newtime;
-                console.log(i);
+                currenttime = timeArray[0];
+                newtimeTop = parseInt(currenttime) - 1;
+                newtimeBottom = parseInt(currenttime) - 2;
+                newtimeTop = (newtimeTop < 0) ? "9" : newtimeTop.toString();
+                secs1Frames[0].textContent = newtimeTop;
+                secs1Frames[1].textContent = newtimeBottom;
             }
-        });
-        //debugger;
-        if (rolling) this._transitionFrames(currenttime, newtime, this.secsNodes[1], nodeArray[1]);
+        
+        
+        //loop through nodes for time category and set values for transition frames
+        // console.log(nodeArray);
+        // timeArray = timeArray[0];
+        // nodeArray[0].forEach( 
+        // (node, i) => {
+        //     currenttime = timeArray[i];
+        //     node.textContent = currenttime;
+        //     if (rolling) {
+        //         console.log(node);
+        //         debugger;
+        //         node[0].textContent = currenttime;
+        //         newtime = parseInt(currenttime) - 1;
+        //         newtime = (newtime < 0) ? "9" : newtime.toString();
+        //         node[1].textContent = newtime;
+        //         console.log(i);
+        //         timeMap.push([currenttime, newtime]);
+        //     }
+        // });
+        // //debugger;
+        // console.log(timeMap)
+        if (rolling) this._transitionFrames(newtimeTop, newtimeBottom, this.secsNodes[1], secs1Frames);
     }
+
+_secs1transition (top, bottom, slotRef, frames) {
+}
 
 //recursion to pass trigger down a chain?
     _transitionFrames (top, bottom, slotRef, frames) {
         console.log(slotRef);
         console.log(frames);
         console.log({top, bottom});
-        const newFrames = `<span>${top}</span><span>${bottom}</span>`;
-        //handle seconds
-            //grab nodes
-
-console.log('roll');
-
-        // frames.forEach(
-        //     (node, i) => {
-        //         //debugger;
-        //         node.classList.add('rolling');
-        //         console.log(top, bottom);
-        //     }
-        // );
-        setTimeout( () => { console.log({top, bottom}); slotRef.innerHTML = (newFrames); }, 500 );
+        const newFrames = `<span>${bottom}</span><span>${bottom}</span>`;
+        frames.forEach(
+            (node, i) => {
+                node.classList.add('rolling');
+            }
+        );
+        setTimeout( () => { slotRef.innerHTML = newFrames; }, 600 );
         //handle other scenarios
         // if (node[0].textContent === "0") {
 
