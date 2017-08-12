@@ -130,6 +130,7 @@ class CountDownTimer {
         //copy secs frame refs into new array
         const secs1Frames = [...nodeArray[0]];
         const rolling = this.settings.rolling;
+        const transitionObject = {};
         let newSecsTop, newSecsBottom; //currenttime reused for slots so could cause race condition
         //frames should match time digits being passed in
         if (nodeArray.length !== timeDigitArray.length) 
@@ -157,6 +158,11 @@ class CountDownTimer {
                     nodeArray[i][0].textContent = newtimeTop;
                     nodeArray[i][1].textContent = newtimeBottom;
                     console.log(timeDigitArray[i], nodeArray[i]);
+                    transitionObject[`timeslot${i}`] = {
+                        newtimeTop,
+                        newtimeBottom,
+                        parentNode: nodeArray[i]
+                    }
                 }
                 if (this.firstRoll) {
                     this.firstRoll = false;
@@ -164,11 +170,11 @@ class CountDownTimer {
                     return;
                 }
             //transition ones seconds frames
-            if (!this.firstRoll) this._transitionFrames(newSecsTop, newSecsBottom, this.secsNodes[0], secs1Frames);
+            if (!this.firstRoll) this._transitionFrames(newSecsTop, newSecsBottom, this.secsNodes[0]);
             // check for 0 value in other frames, transition if nec 
             // and use recursion to cascade 
             // from tens second slot to highest time digit
-            this._cascadeTransition(0, timeDigitArray);
+            this._cascadeTransition(0, timeDigitArray, transitionObject);
             }
         //non-rolling implementation
         else {
@@ -178,13 +184,12 @@ class CountDownTimer {
 
     // uses recursion to cascade frame transition to highest time digit
     // non-strict condition to enable number and string types
-    _cascadeTransition(index, timeDigitArray) {
-        
+    _cascadeTransition(index, timeDigitArray, transitionObject) {
         // non-strict condition to enable number and string types
         if (timeDigitArray[index] == "0") {
             //transition frames on next highest slot
-
-            //this.transitionFrames()
+            const {newtimeTop, newtimeBottom, parentNode} = transitionObject[`timeslot${index+1}`]
+            this._transitionFrames(newtimeTop, newtimeBottom, parentNode);
             console.log(`rolling slot ${index + 1}`);
             //stop transition at highest slot
             if (index >= timeDigitArray.length - 1) {
@@ -195,10 +200,11 @@ class CountDownTimer {
     }
 
 //recursion to pass trigger down a chain?
-    _transitionFrames (top, bottom, slotRef, frames) {
-        const newFrames = `<span>${bottom}</span><span>${bottom}</span>`;
+    _transitionFrames (top, bottom, slotRef) {
+        const frames = [].concat(slotRef.childNodes[0], slotRef.childNodes[1]);
+        const newFrames = `<span>${bottom}</span><span></span>`;
         frames.forEach(
-            (node, i) => {
+            (node) => {
                 node.classList.add('rolling');
             }
         );
