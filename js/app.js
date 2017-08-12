@@ -3,7 +3,7 @@
 
 class CountDownTimer {
 
-    constructor(settings = {rolling: true}) {
+    constructor(settings = {rolling: false}) {
         this.timerIntervalID; //var used to clear interval
         this.numDisplaySlots; //used to check how much 0 padding is required
         this.settings = settings;
@@ -17,8 +17,10 @@ class CountDownTimer {
         const nodeArray = selectors.map(
             (key) => Array.from(document.querySelectorAll(selectorsObj[key]))
         );
-        [this.minsNodes, this.secsNodes] = nodeArray;
-        return nodeArray;
+        const [minsNodes, secsNodes] = nodeArray;
+        this.secsNodes = secsNodes.reverse();
+        this.minsNodes = minsNodes.reverse();
+        return [...this.secsNodes, ...this.minsNodes];
     }
 
 
@@ -68,10 +70,15 @@ class CountDownTimer {
             mins = Math.abs(mins);
             secs = Math.abs(secs);
         }
-        secs = this._padNum(secs, padTo);
-        mins = this._padNum(mins, padMinsTo);
-        console.log({mins, secs});
-        this._handleSlots({mins, secs});
+        secs = this._padNum(secs, padTo)
+                    .split('')
+                    .reverse();
+        mins = this._padNum(mins, padMinsTo)
+                    .split('')
+                    .reverse();
+        const timeDigitArray = [...secs, ...mins]
+        console.log(timeDigitArray);
+        this._handleSlots(timeDigitArray);
         if (returnAsNum) {
             secs = parseFloat(secs);
             mins = parseFloat(mins);
@@ -89,20 +96,20 @@ class CountDownTimer {
         return num;
     }
 
+    // helper function to collect frames that sit in
+    // parent div that is visible counter slot
+    _getSlotFrames(nodeArray) {
+        return nodeArray.map( 
+                    (node) => [].concat(node.childNodes[0], node.childNodes[1])
+        );
+    }
+
     // rolling is boolean to allow setting of rolling counter. 
     // Takes default from settings obj passed into constructor    
-    _handleSlots(timeDigitObj = {}) {
-        let minsFrames, secsFrames;
+    _handleSlots(timeDigitArray = ["0","0","0","0"]) {
+        let nodeArray, minsFrames, secsFrames;
         //split time strings into arrays
-        let { mins, secs } = timeDigitObj;
-        mins = mins.split('').reverse();
-        secs = secs.split('').reverse();
         if (this.settings.rolling) {
-                // helper function to collect frames that sit in
-                // parent div that is visible counter slot
-                const getSlotFrames = (nodeArray) => nodeArray.map( 
-                (node) => [].concat(node.childNodes[0], node.childNodes[1])
-            )
             // add parent nodes to array
             const nodeRefs = this._setNodeRefs(
                 // arg is object with selectors for querySelectorAll
@@ -110,96 +117,71 @@ class CountDownTimer {
                 minsRef: ".count-down .mins",
                 secsRef: ".count-down .secs"
             })
-            const   [minsParentNodes, secsParentNodes] = nodeRefs;
-            minsFrames = getSlotFrames(minsParentNodes).reverse(),                
-            secsFrames = getSlotFrames(secsParentNodes).reverse(); 
+            console.log({nodeRefs});
+            nodeArray = this._getSlotFrames(nodeRefs);        
+            console.log({nodeArray});
         }
         else {
-            minsFrames = [...this.minsNodes.reverse()],
-            secsFrames = [...this.secsNodes.reverse()];
+            nodeArray = [...this.secsNodes, ...this.minsNodes]; //TO DO  check non-rolling implem to see if this is nec or correct
         }
-        this._populateFrames(secsFrames, secs);
-        //this._populateFrames(minsFrames, mins);
+        this._populateFrames(nodeArray, timeDigitArray);
         return;
     }
 
-    // _populateFrames (nodeArray, timeArray) { 
-    //     const timeMap = [];
-    //     const rolling = this.settings.rolling;
-    //     let currenttime, newtime;
-    //     //frames should match time digits being passed in
-    //     if (nodeArray.length !== timeArray.length) 
-    //         console.error(new Error ('Number of digits does not match number of counter frames'));
-    //     //loop through nodes for time category and set values for transition frames
-    //     nodeArray.forEach( 
-    //     (node, i) => {
-    //         currenttime = timeArray[i];
-    //         node.textContent = currenttime;
-    //         if (rolling) {
-    //             //debugger;
-    //             node[0].textContent = currenttime;
-    //             newtime = parseInt(currenttime) - 1;
-    //             newtime = (newtime < 0) ? "9" : newtime.toString();
-    //             node[1].textContent = newtime;
-    //             console.log(i);
-    //             timeMap.push([currenttime, newtime]);
-    //         }
-    //     });
-    //     //debugger;
-    //     console.log(timeMap)
-    //     if (rolling) this._transitionFrames(currenttime, newtime, this.secsNodes[1], nodeArray[1]);
-    // }
-
-
-    _populateFrames (nodeArray, timeArray) { 
-        const timeMap = [];
+    _populateFrames (nodeArray, timeDigitArray) { 
+        //copy secs frame refs into new array
         const secs1Frames = [...nodeArray[0]];
         const rolling = this.settings.rolling;
         let currenttime, newtimeTop, newtimeBottom;
         //frames should match time digits being passed in
-        if (nodeArray.length !== timeArray.length) 
+        if (nodeArray.length !== timeDigitArray.length) 
             console.error(new Error ('Number of digits does not match number of counter frames'));
         //handle seconds ones slot
             //
             if (rolling) {
-                currenttime = timeArray[0];
-                newtimeTop = this.firstRoll ? parseInt(currenttime) : parseInt(currenttime) + 1;
-                newtimeBottom = parseInt(currenttime);
-                newtimeTop = (newtimeTop < 0) ? "9" : newtimeTop.toString();
+                currenttime = timeDigitArray[0]; //can prob refactor this out
+                newtimeTop = this.firstRoll ? currenttime : 
+                    (currenttime === "9") ? "0" : (parseInt(currenttime) + 1).toString();
+                newtimeBottom = currenttime;
+                console.log({newtimeTop, newtimeBottom});
+                //newtimeTop = (newtimeTop < 0) ? "9" : newtimeTop.toString();
                 secs1Frames[0].textContent = newtimeTop;
                 secs1Frames[1].textContent = newtimeBottom;
                 if (this.firstRoll) {
                     this.firstRoll = false;
+                    //populate remaining frames
                     return;
                 }
+                //transition ones seconds frames
+                if (!this.firstRoll) this._transitionFrames(newtimeTop, newtimeBottom, this.secsNodes[1], secs1Frames);
+                // check for 0 value in other frames, transition if nec 
+                // and use recursion to cascade 
+                // from tens second slot to highest time digit
+                this._cascadeTransition(0, timeDigitArray);
+                }
+            else {
+                //non-rolling implementation
+                    // loop through timeArray and assign content to top frame only
             }
-        
-        
-        //loop through nodes for time category and set values for transition frames
-        // console.log(nodeArray);
-        // timeArray = timeArray[0];
-        // nodeArray[0].forEach( 
-        // (node, i) => {
-        //     currenttime = timeArray[i];
-        //     node.textContent = currenttime;
-        //     if (rolling) {
-        //         console.log(node);
-        //         debugger;
-        //         node[0].textContent = currenttime;
-        //         newtime = parseInt(currenttime) - 1;
-        //         newtime = (newtime < 0) ? "9" : newtime.toString();
-        //         node[1].textContent = newtime;
-        //         console.log(i);
-        //         timeMap.push([currenttime, newtime]);
-        //     }
-        // });
-        // //debugger;
-        // console.log(timeMap)
-        if (rolling && !this.firstRoll) this._transitionFrames(newtimeTop, newtimeBottom, this.secsNodes[1], secs1Frames);
     }
 
-_secs1transition (top, bottom, slotRef, frames) {
-}
+    // uses recursion to cascade frame transition to highest time digit
+    // non-strict condition to enable number and string types
+    _cascadeTransition(index, timeDigitArray) {
+        
+        // non-strict condition to enable number and string types
+        if (timeDigitArray[index] == "0") {
+            //transition frames on next highest slot
+            
+            //this.transitionFrames()
+            console.log(`rolling slot ${index + 1}`);
+            //stop transition at highest slot
+            if (index >= timeDigitArray.length - 1) {
+                return;
+            }
+            _cascadeTransition(index + 1);
+        }
+    }
 
 //recursion to pass trigger down a chain?
     _transitionFrames (top, bottom, slotRef, frames) {
@@ -210,14 +192,6 @@ _secs1transition (top, bottom, slotRef, frames) {
             }
         );
         setTimeout( () => { slotRef.innerHTML = newFrames; }, 600 );
-        //handle other scenarios
-        // if (node[0].textContent === "0") {
-
-        // }
-        // else {
-        //     node.classList.add(rolling);
-        //     setTimeout(() => {node.classList.remove(rolling)}, duration)
-        // }
     }
 
 }
