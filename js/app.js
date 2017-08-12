@@ -25,6 +25,7 @@ class CountDownTimer {
 //TO DO - esnure nodes are obtained after num of frames for mins is determined
     startCountDown(secs) {
         clearInterval(this.timerIntervalID);
+        this.firstRoll = true;
         // if counter doesn't roll, destructure node refs into default vars
         // and pull in nodes held on class object
         // as arrays of nodes
@@ -162,11 +163,15 @@ class CountDownTimer {
             //
             if (rolling) {
                 currenttime = timeArray[0];
-                newtimeTop = parseInt(currenttime) - 1;
-                newtimeBottom = parseInt(currenttime) - 2;
+                newtimeTop = this.firstRoll ? parseInt(currenttime) : parseInt(currenttime) + 1;
+                newtimeBottom = parseInt(currenttime);
                 newtimeTop = (newtimeTop < 0) ? "9" : newtimeTop.toString();
                 secs1Frames[0].textContent = newtimeTop;
                 secs1Frames[1].textContent = newtimeBottom;
+                if (this.firstRoll) {
+                    this.firstRoll = false;
+                    return;
+                }
             }
         
         
@@ -190,7 +195,7 @@ class CountDownTimer {
         // });
         // //debugger;
         // console.log(timeMap)
-        if (rolling) this._transitionFrames(newtimeTop, newtimeBottom, this.secsNodes[1], secs1Frames);
+        if (rolling && !this.firstRoll) this._transitionFrames(newtimeTop, newtimeBottom, this.secsNodes[1], secs1Frames);
     }
 
 _secs1transition (top, bottom, slotRef, frames) {
@@ -198,9 +203,6 @@ _secs1transition (top, bottom, slotRef, frames) {
 
 //recursion to pass trigger down a chain?
     _transitionFrames (top, bottom, slotRef, frames) {
-        console.log(slotRef);
-        console.log(frames);
-        console.log({top, bottom});
         const newFrames = `<span>${bottom}</span><span>${bottom}</span>`;
         frames.forEach(
             (node, i) => {
