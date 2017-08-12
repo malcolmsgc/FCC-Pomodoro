@@ -117,9 +117,7 @@ class CountDownTimer {
                 minsRef: ".count-down .mins",
                 secsRef: ".count-down .secs"
             })
-            console.log({nodeRefs});
             nodeArray = this._getSlotFrames(nodeRefs);        
-            console.log({nodeArray});
         }
         else {
             nodeArray = [...this.secsNodes, ...this.minsNodes]; //TO DO  check non-rolling implem to see if this is nec or correct
@@ -132,27 +130,41 @@ class CountDownTimer {
         //copy secs frame refs into new array
         const secs1Frames = [...nodeArray[0]];
         const rolling = this.settings.rolling;
-        let currenttime, newtimeTop, newtimeBottom;
+        let newSecsTop, newSecsBottom; //currenttime reused for slots so could cause race condition
         //frames should match time digits being passed in
         if (nodeArray.length !== timeDigitArray.length) 
             console.error(new Error ('Number of digits does not match number of counter frames'));
         //handle seconds ones slot
         if (rolling) {
-            currenttime = timeDigitArray[0]; //can prob refactor this out
-            newtimeTop = this.firstRoll ? currenttime : 
-                (currenttime === "9") ? "0" : (parseInt(currenttime) + 1).toString();
-            newtimeBottom = currenttime;
-            console.log({newtimeTop, newtimeBottom});
-            //newtimeTop = (newtimeTop < 0) ? "9" : newtimeTop.toString();
-            secs1Frames[0].textContent = newtimeTop;
-            secs1Frames[1].textContent = newtimeBottom;
-            if (this.firstRoll) {
-                this.firstRoll = false;
-                //populate remaining frames
-                return;
-            }
+            const currentSecs = timeDigitArray[0];
+            newSecsTop = this.firstRoll ? currentSecs : 
+                (currentSecs === "9") ? "0" : (parseInt(currentSecs) + 1).toString();
+            newSecsBottom = currentSecs;
+            console.log({newSecsTop, newSecsBottom});
+            secs1Frames[0].textContent = newSecsTop;
+            secs1Frames[1].textContent = newSecsBottom;
+            //populate remaining frames
+            for (let i = 1,
+                currenttime,
+                newtimeTop,
+                newtimeBottom,
+                numDigits = timeDigitArray.length; 
+                i < numDigits; i++) {
+                    currenttime = timeDigitArray[i];
+                    newtimeTop = currenttime;
+                    newtimeBottom = (parseInt(currenttime) - 1).toString();
+                    console.log({newtimeTop, newtimeBottom})
+                    nodeArray[i][0].textContent = newtimeTop;
+                    nodeArray[i][1].textContent = newtimeBottom;
+                    console.log(timeDigitArray[i], nodeArray[i]);
+                }
+                if (this.firstRoll) {
+                    this.firstRoll = false;
+                    console.log('first roll done');
+                    return;
+                }
             //transition ones seconds frames
-            if (!this.firstRoll) this._transitionFrames(newtimeTop, newtimeBottom, this.secsNodes[0], secs1Frames);
+            if (!this.firstRoll) this._transitionFrames(newSecsTop, newSecsBottom, this.secsNodes[0], secs1Frames);
             // check for 0 value in other frames, transition if nec 
             // and use recursion to cascade 
             // from tens second slot to highest time digit
@@ -171,7 +183,7 @@ class CountDownTimer {
         // non-strict condition to enable number and string types
         if (timeDigitArray[index] == "0") {
             //transition frames on next highest slot
-            
+
             //this.transitionFrames()
             console.log(`rolling slot ${index + 1}`);
             //stop transition at highest slot
@@ -190,7 +202,6 @@ class CountDownTimer {
                 node.classList.add('rolling');
             }
         );
-        console.log('roll');
         setTimeout( () => { slotRef.innerHTML = newFrames; }, 600 );
     }
 
