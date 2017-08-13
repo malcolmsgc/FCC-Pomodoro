@@ -122,7 +122,6 @@ class CountDownTimer {
         else {
             nodeRefs = [...this.secsNodes, ...this.minsNodes]; //TO DO  check non-rolling implem to see if this is nec or correct
         }
-        console.log('GET NODES');
         this._populateFrames(nodeRefs, framesArray, timeDigitArray);
         return;
     }
@@ -132,7 +131,7 @@ class CountDownTimer {
         const secs1Frames = framesArray[0];
         const rolling = this.settings.rolling;
         const transitionObject = {};
-        let newSecsTop, newSecsBottom; //currenttime reused for slots so could cause race condition
+        let newSecsTop, newSecsBottom; 
         //frames should match time digits being passed in
         if (nodeRefs.length !== timeDigitArray.length) 
             console.error(new Error ('Number of digits does not match number of counter frames'));
@@ -142,7 +141,6 @@ class CountDownTimer {
             newSecsTop = this.firstRoll ? currentSecs : 
                 (currentSecs === "9") ? "0" : (parseInt(currentSecs) + 1).toString();
             newSecsBottom = currentSecs;
-            console.log({newSecsTop, newSecsBottom});
             secs1Frames[0].textContent = newSecsTop;
             secs1Frames[1].textContent = newSecsBottom;
             //populate remaining frames
@@ -150,12 +148,14 @@ class CountDownTimer {
                 currenttime,
                 timeTop,
                 timeBottom,
+                maxVal,
                 numDigits = timeDigitArray.length; 
                 i < numDigits; i++) {
+                    //set max value for minutes slot or other decimal based slots
+                    maxVal = (i === 1) ? "5" : "9";
                     currenttime = timeDigitArray[i];
                     timeTop = currenttime;
-                    timeBottom = (currenttime === "9") ? "0" : (parseInt(currenttime) - 1).toString();
-                    console.log({currenttime, timeTop, timeBottom})
+                    timeBottom = (currenttime === "0") ? maxVal : (parseInt(currenttime) - 1).toString();
                     transitionObject[`timeslot${i+1}`] = {
                         timeTop,
                         timeBottom,
@@ -171,12 +171,10 @@ class CountDownTimer {
                 // check for 0 value in other frames, transition if nec 
                 // and use recursion to cascade 
                 // from tens second slot to highest time digit
-                console.log({timeDigitArray, transitionObject});
                 this._cascadeTransition(0, timeDigitArray, transitionObject);
                 // update firstroll flag
                 if (this.firstRoll) {
                     this.firstRoll = false;
-                    console.log('first roll done');
                     return;
                 }
             }
@@ -189,9 +187,10 @@ class CountDownTimer {
     // uses recursion to cascade frame transition to highest time digit
     // non-strict condition to enable number and string types
     _cascadeTransition(index, timeDigitArray, transitionObject) {
+        //different trigger value for tens slot for seconds
+        const triggerVal = (index === 1) ? "5" : "9";
         // non-strict condition to enable number and string types
-        if (timeDigitArray[index] == "9") {
-            console.log("CASCADE!!!!");
+        if (timeDigitArray[index] == triggerVal) {
             //transition frames on next highest slot
             // index offset by two to match non-zero index of timeslot
             const {timeTop, timeBottom, parentNode} = transitionObject[`timeslot${index+2}`];
@@ -202,13 +201,11 @@ class CountDownTimer {
             if (index >= timeDigitArray.length - 2) {
                 return;
             }
-            this._cascadeTransition(index + 1, timeDigitArray);
+            this._cascadeTransition(index + 1, timeDigitArray, transitionObject);
         }
     }
     
-    //recursion to pass trigger down a chain?
     _transitionOnesSecSlot (top, bottom, slotRef) {
-        console.log("TRANSITION!!!!");
         const frames = [].concat(slotRef.childNodes[0], slotRef.childNodes[1]);
         const newFrames = `<span>${bottom}</span><span></span>`;
         frames.forEach(
@@ -220,7 +217,6 @@ class CountDownTimer {
     }
     
     _transitionFrames (top, bottom, slotRef) {
-        console.log("TRANSITION!!!!");
         const frames = [].concat(slotRef.childNodes[0], slotRef.childNodes[1]);
         const newFrames = `<span>${top}</span><span>${bottom}</span>`;
         frames.forEach(
