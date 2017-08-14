@@ -9,10 +9,7 @@ class CountDownTimer {
         this.settings = settings;
     }
 
-    _setNodeRefs(selectorsObj = {
-                                minsRef: ".count-down .mins span:first-child",
-                                secsRef: ".count-down .secs span:first-child"
-                            }) {
+    _setNodeRefs(selectorsObj = {mins: "", secs: ""}) {
         const selectors = Object.keys(selectorsObj);
         const nodeArray = selectors.map(
             (key) => Array.from(document.querySelectorAll(selectorsObj[key]))
@@ -20,12 +17,11 @@ class CountDownTimer {
         const [minsNodes, secsNodes] = nodeArray;
         this.secsNodes = secsNodes.reverse();
         this.minsNodes = minsNodes.reverse();
-        this.allNodes = [...this.secsNodes, ...this.minsNodes];
         return [...this.secsNodes, ...this.minsNodes];
     }
 
 
-//TO DO - esnure nodes are obtained after num of frames for mins is determined
+//TO DO - ensure nodes are obtained after num of frames for mins is determined
     startCountDown(secs) {
         clearInterval(this.timerIntervalID);
         this.firstRoll = true;
@@ -34,7 +30,12 @@ class CountDownTimer {
         // as arrays of nodes
         // to pass down to display and display helper functions
         if (!this.settings.rolling) {
-            this._setNodeRefs(); //adds arrays of node refs to prototype
+            this._setNodeRefs(
+                // argument is obj with css selectors as values
+                {
+                minsRef: ".count-down .mins span:first-child",
+                secsRef: ".count-down .secs span:first-child"
+            }); //adds arrays of node refs to prototype
         }
         this.numDisplaySlots = undefined;
         const   now = Date.now(),
@@ -128,7 +129,6 @@ class CountDownTimer {
 
     _populateFrames (nodeRefs, framesArray, timeDigitArray) { 
         //copy secs frame refs into new array
-        const secs1Frames = framesArray[0];
         const rolling = this.settings.rolling;
         const transitionObject = {};
         let newSecsTop, newSecsBottom; 
@@ -137,6 +137,7 @@ class CountDownTimer {
             console.error(new Error ('Number of digits does not match number of counter frames'));
         //handle seconds ones slot
         if (rolling) {
+            const secs1Frames = framesArray[0];
             const currentSecs = timeDigitArray[0];
             newSecsTop = this.firstRoll ? currentSecs : 
                 (currentSecs === "9") ? "0" : (parseInt(currentSecs) + 1).toString();
@@ -180,7 +181,12 @@ class CountDownTimer {
             }
         //non-rolling implementation
         else {
-                // loop through timeArray and assign content to top frame only
+            // loop through nodes and assign content
+            // node should be top frame only as non-rolling querySelector gets first child
+            nodeRefs.forEach(
+                (node, i) => { node.textContent = timeDigitArray[i]; }
+            );
+
         }
     }
 
@@ -234,3 +240,4 @@ class CountDownTimer {
 /* -------------------------------- */
 
 const pomodoro = new CountDownTimer({rolling: true});
+const pomodoroStatic = new CountDownTimer({rolling: false});
