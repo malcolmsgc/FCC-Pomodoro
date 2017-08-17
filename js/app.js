@@ -1,4 +1,9 @@
 /* MOVE TO MODULE COUNTDOWNTIMER */
+
+/* 
+TO DO: when >99:99 add another timer slot
+*/
+
 //import CountDownTimer from "./components/CountDownTimer";
 
 class CountDownTimer {
@@ -135,8 +140,8 @@ class CountDownTimer {
         //frames should match time digits being passed in
         if (nodeRefs.length !== timeDigitArray.length) 
             console.error(new Error ('Number of digits does not match number of counter frames'));
-        //handle seconds ones slot
         if (rolling) {
+            //handle seconds ones slot
             const secs1Frames = framesArray[0];
             const currentSecs = timeDigitArray[0];
             newSecsTop = this.firstRoll ? currentSecs : 
@@ -239,5 +244,54 @@ class CountDownTimer {
 /* ENDOF COUNTDOWNTIMER CLASS       */
 /* -------------------------------- */
 
+class SetTimer {
+
+    constructor(defaultInMins, { minsNode, secsNode } = {}) {
+        this.defaultInSecs = Math.round(defaultInMins * 60);
+        this.secsNode = secsNode;
+        this.minsNode = minsNode;
+    }
+
+    displayTime(totalSecs = this.defaultInSecs) {
+        const mins = this._padNum( Math.floor( totalSecs / 60 ) );
+        const secs = this._padNum(totalSecs % 60);
+        this.minsNode.textContent = mins;
+        this.secsNode.textContent = secs;
+        return totalSecs;
+    }
+
+    incrementSecs(totalSecs){
+        return this.displayTime(++totalSecs);
+    }
+    
+    decrementSecs(totalSecs){
+        if (totalSecs > 0) return this.displayTime(--totalSecs);
+        else return totalSecs;
+    }
+
+    _padNum(num, padDepth = 2) {
+        if (typeof num === "number") {
+            num = num.toString();
+        }
+        while (num.length < padDepth) {
+            num = `0${num}`;
+        }
+        return num;
+    }
+
+}
+
+//TO-DO NAMESPACE MAIN APP JS
+//  Initialise Control Panel
+//      Work for set time controls
+const workForMins = document.querySelector(".set-timer.work-for .mins");
+const workForSecs = document.querySelector(".set-timer.work-for .secs");
+const setWorkFor = new SetTimer(20, {minsNode: workForMins, secsNode: workForSecs});
+let workForTime = setWorkFor.displayTime();
+//      Break for set time controls
+const breakForSecs = document.querySelector(".set-timer.break-for .secs");
+const breakForMins = document.querySelector(".set-timer.break-for .mins");
+const setBreakFor = new SetTimer(15, {minsNode: breakForMins, secsNode: breakForSecs});
+let breakForTime = setBreakFor.displayTime();
+//  Initialise countdown time display
 const pomodoro = new CountDownTimer({rolling: true});
-const pomodoroStatic = new CountDownTimer({rolling: false});
