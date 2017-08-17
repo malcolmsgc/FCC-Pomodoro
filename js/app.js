@@ -269,6 +269,16 @@ class SetTimer {
         else return totalSecs;
     }
 
+    incrementMins(totalSecs){
+        return this.displayTime(totalSecs + 60);
+    }
+    
+    decrementMins(totalSecs){
+        if (totalSecs >= 60) return this.displayTime(totalSecs - 60);
+        else if (totalSecs > 0) return this.displayTime(0);
+        else return 0;
+    }
+
     _padNum(num, padDepth = 2) {
         if (typeof num === "number") {
             num = num.toString();
