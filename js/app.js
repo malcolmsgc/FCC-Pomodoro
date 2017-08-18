@@ -279,6 +279,10 @@ class SetTimer {
         else return 0;
     }
 
+    quickAddMinutes(minsToAdd, totalSecs) {
+        return this.displayTime(totalSecs + (minsToAdd * 60));
+    }
+
     _padNum(num, padDepth = 2) {
         if (typeof num === "number") {
             num = num.toString();
@@ -291,17 +295,36 @@ class SetTimer {
 
 }
 
+/* -------------------------------- */
+/*       ENDOF SETTIMER CLASS       */
+/* -------------------------------- */
+
 //TO-DO NAMESPACE MAIN APP JS
 //  Initialise Control Panel
 //      Work for set time controls
 const workForMins = document.querySelector(".set-timer.work-for .mins");
 const workForSecs = document.querySelector(".set-timer.work-for .secs");
-const setWorkFor = new SetTimer(20, {minsNode: workForMins, secsNode: workForSecs});
+const setWorkFor = new SetTimer(15, {minsNode: workForMins, secsNode: workForSecs});
 let workForTime = setWorkFor.displayTime();
 //      Break for set time controls
 const breakForSecs = document.querySelector(".set-timer.break-for .secs");
 const breakForMins = document.querySelector(".set-timer.break-for .mins");
-const setBreakFor = new SetTimer(15, {minsNode: breakForMins, secsNode: breakForSecs});
+const setBreakFor = new SetTimer(5, {minsNode: breakForMins, secsNode: breakForSecs});
 let breakForTime = setBreakFor.displayTime();
+// Add listeners
+//      Quick add buttons
+const quickAddBtnListeners = (selectorSnippet, timeVar, setTimer) => {
+    const allQuickAddBtns = document.querySelectorAll(`.${selectorSnippet} div[data-addmins]`);
+    allQuickAddBtns.forEach(
+        (btn) => { btn.addEventListener("click", 
+            function(e) {
+                e.stopPropagation; 
+                timeVar = setTimer.quickAddMinutes(btn.dataset.addmins, timeVar);
+            }) 
+        }
+    );
+};
+quickAddBtnListeners("work-for", workForTime, setWorkFor);
+quickAddBtnListeners("break-for", breakForTime, setBreakFor);
 //  Initialise countdown time display
-const pomodoro = new CountDownTimer({rolling: true});
+const pomodoro = (Modernizr.csstransitions) ? new CountDownTimer({rolling: true}) : new CountDownTimer({rolling: false});
