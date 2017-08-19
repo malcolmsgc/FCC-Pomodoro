@@ -350,13 +350,26 @@ timerResetListeners();
 //      increment and decrement buttons
 const workForCrementBtns = document.querySelectorAll(`.work-for .crement > div`);
 console.log(workForCrementBtns);
+let intervalId;
+
+function x() {
+    workForTime = setWorkFor.incrementMins(workForTime);
+}
+
+function keepRunning(keyDown) {
+    if (!keyDown) clearInterval(intervalId);
+    else {
+        x();
+        intervalId = setInterval(x, 350)
+    }
+}
 
 workForCrementBtns[0].addEventListener("mousedown", 
-    (e) => {
-        workForTime = setWorkFor.incrementMins(workForTime);
-        console.log(this);
-        const intervalId = this.setInterval(() => {workForTime = setWorkFor.incrementMins(workForTime);}, 350);
+    () => { 
+        keepRunning(true);
     });
+workForCrementBtns[0].addEventListener("mouseup", 
+    () => { keepRunning(false); });
 //      start/stop count-down button
 //      reset count-down button
 const countDownResetBtn = document.querySelector('.reset.main-reset');
