@@ -4,12 +4,10 @@
 **/css
 /.sass-cache
 /js/vendor/
-tile.png
-apple-touch-icon.png
-favicon.ico
 tile-wide.png
 /node_modules/
 /.vscode/settings.json
+**/assets
 
 # Compiled source #
 ###################

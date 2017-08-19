@@ -283,6 +283,10 @@ class SetTimer {
         return this.displayTime(totalSecs + (minsToAdd * 60));
     }
 
+    setToDefault() {
+        return this.displayTime(this.defaultInSecs);
+    }
+
     _padNum(num, padDepth = 2) {
         if (typeof num === "number") {
             num = num.toString();
@@ -299,18 +303,18 @@ class SetTimer {
 /*       ENDOF SETTIMER CLASS       */
 /* -------------------------------- */
 
-//TO-DO NAMESPACE MAIN APP JS
+//TO-DO NAMESPACE MAIN APP JS -- create pomodoro class with init method
 //  Initialise Control Panel
 //      Work for set time controls
 const workForMins = document.querySelector(".set-timer.work-for .mins");
 const workForSecs = document.querySelector(".set-timer.work-for .secs");
 const setWorkFor = new SetTimer(15, {minsNode: workForMins, secsNode: workForSecs});
-let workForTime = setWorkFor.displayTime();
+let workForTime = setWorkFor.setToDefault();
 //      Break for set time controls
 const breakForSecs = document.querySelector(".set-timer.break-for .secs");
 const breakForMins = document.querySelector(".set-timer.break-for .mins");
 const setBreakFor = new SetTimer(5, {minsNode: breakForMins, secsNode: breakForSecs});
-let breakForTime = setBreakFor.displayTime();
+let breakForTime = setBreakFor.setToDefault();
 // Add listeners
 //      Quick add buttons
 const quickAddBtnListeners = (selectorSnippet, timeVar, setTimer) => {
@@ -318,13 +322,42 @@ const quickAddBtnListeners = (selectorSnippet, timeVar, setTimer) => {
     allQuickAddBtns.forEach(
         (btn) => { btn.addEventListener("click", 
             function(e) {
-                e.stopPropagation; 
+                e.stopPropagation;
                 timeVar = setTimer.quickAddMinutes(btn.dataset.addmins, timeVar);
-            }) 
+            })
         }
     );
 };
 quickAddBtnListeners("work-for", workForTime, setWorkFor);
 quickAddBtnListeners("break-for", breakForTime, setBreakFor);
+//      setTimer reset buttons
+const timerResetListeners = () => {
+    const workForResetBtn = document.querySelectorAll('.work-for .reset-btn');
+    const breakForResetBtn = document.querySelectorAll(`.break-for .reset-btn`);
+    workForResetBtn.forEach( (node) => {
+        console.log(node);
+        node.addEventListener("mouseup",
+            function(e) {
+                e.stopPropagation; //necessary to prevent callback firing on nested nodes
+                workForTime = setWorkFor.setToDefault();
+                console.log('reset work timer');
+            }, {capture:true});
+    });
+    breakForResetBtn.forEach( (node) => {
+        node.addEventListener("click", 
+            function(e) {
+                e.stopPropagation; //necessary to prevent callback firing on nested nodes
+                breakForTime = setBreakFor.setToDefault();
+                console.log('reset break timer');
+            });
+    });
+    console.log(workForResetBtn);
+};
+timerResetListeners();
+//      increment and decrement buttons
+//      start/stop count-down button
+//      reset count-down button
+const countDownResetBtn = document.querySelector('.reset.main-reset');
+countDownResetBtn.addEventListener('click', function(){console.log('main reset')});
 //  Initialise countdown time display
 const pomodoro = (Modernizr.csstransitions) ? new CountDownTimer({rolling: true}) : new CountDownTimer({rolling: false});
