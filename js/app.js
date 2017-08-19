@@ -349,27 +349,67 @@ const timerResetListeners = () => {
 timerResetListeners();
 //      increment and decrement buttons
 const workForCrementBtns = document.querySelectorAll(`.work-for .crement > div`);
+const breakForCrementBtns = document.querySelectorAll(`.break-for .crement > div`);
 console.log(workForCrementBtns);
-let intervalId;
-
-function x() {
+let continuousPressId;
+// --------------------------------------------------------------------------------
+// TO DO -- REFACTOR THIS. I'M SURE IT CAN BE CLEANER
+// work for functions
+function continuousPressMinsUpWF() {
     workForTime = setWorkFor.incrementMins(workForTime);
 }
+function continuousPressMinsDownWF() {
+    workForTime = setWorkFor.decrementMins(workForTime);
+}
+function continuousPressSecsUpWF() {
+    workForTime = setWorkFor.incrementSecs(workForTime);
+}
+function continuousPressSecsDownWF() {
+    workForTime = setWorkFor.decrementSecs(workForTime);
+}
+// break for functions
+function continuousPressMinsUpBF() {
+    breakForTime = setBreakFor.incrementMins(breakForTime);
+}
+function continuousPressMinsDownBF() {
+    breakForTime = setBreakFor.decrementMins(breakForTime);
+}
+function continuousPressSecsUpBF() {
+    breakForTime = setBreakFor.incrementSecs(breakForTime);
+}
+function continuousPressSecsDownBF() {
+    breakForTime = setBreakFor.decrementSecs(breakForTime);
+}
 
-function keepRunning(keyDown) {
-    if (!keyDown) clearInterval(intervalId);
+function keepRunning(keyDown, callback) {
+    if (!keyDown) {
+        clearInterval(continuousPressId);
+        continuousPressId = null;
+    }
     else {
-        x();
-        intervalId = setInterval(x, 350)
+        if (continuousPressId) return; //prevent two buttons running at same time
+        callback();
+        continuousPressId = setInterval(callback, 325)
     }
 }
 
-workForCrementBtns[0].addEventListener("mousedown", 
-    () => { 
-        keepRunning(true);
-    });
-workForCrementBtns[0].addEventListener("mouseup", 
-    () => { keepRunning(false); });
+workForCrementBtns[0].addEventListener("mousedown", () => { keepRunning(true, continuousPressMinsUpWF); });
+workForCrementBtns[0].addEventListener("mouseup", () => { keepRunning(false, continuousPressMinsUpWF); });
+workForCrementBtns[1].addEventListener("mousedown", () => { keepRunning(true, continuousPressMinsDownWF); });
+workForCrementBtns[1].addEventListener("mouseup", () => { keepRunning(false, continuousPressMinsDownWF); });
+workForCrementBtns[3].addEventListener("mousedown", () => { keepRunning(true, continuousPressSecsUpWF); });
+workForCrementBtns[3].addEventListener("mouseup", () => { keepRunning(false, continuousPressSecsUpWF); });
+workForCrementBtns[4].addEventListener("mousedown", () => { keepRunning(true, continuousPressSecsDownWF); });
+workForCrementBtns[4].addEventListener("mouseup", () => { keepRunning(false, continuousPressSecsDownWF); });
+breakForCrementBtns[0].addEventListener("mousedown", () => { keepRunning(true, continuousPressMinsUpBF); });
+breakForCrementBtns[0].addEventListener("mouseup", () => { keepRunning(false, continuousPressMinsUpBF); });
+breakForCrementBtns[1].addEventListener("mousedown", () => { keepRunning(true, continuousPressMinsDownBF); });
+breakForCrementBtns[1].addEventListener("mouseup", () => { keepRunning(false, continuousPressMinsDownBF); });
+breakForCrementBtns[3].addEventListener("mousedown", () => { keepRunning(true, continuousPressSecsUpBF); });
+breakForCrementBtns[3].addEventListener("mouseup", () => { keepRunning(false, continuousPressSecsUpBF); });
+breakForCrementBtns[4].addEventListener("mousedown", () => { keepRunning(true, continuousPressSecsDownBF); });
+breakForCrementBtns[4].addEventListener("mouseup", () => { keepRunning(false, continuousPressSecsDownBF); });
+// --------------------------------------------------------------------------------
 //      start/stop count-down button
 //      reset count-down button
 const countDownResetBtn = document.querySelector('.reset.main-reset');
