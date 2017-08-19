@@ -324,6 +324,7 @@ const quickAddBtnListeners = (selectorSnippet, timeVar, setTimer) => {
             function(e) {
                 e.stopPropagation;
                 timeVar = setTimer.quickAddMinutes(btn.dataset.addmins, timeVar);
+                console.log(timeVar);
             })
         }
     );
@@ -332,29 +333,30 @@ quickAddBtnListeners("work-for", workForTime, setWorkFor);
 quickAddBtnListeners("break-for", breakForTime, setBreakFor);
 //      setTimer reset buttons
 const timerResetListeners = () => {
-    const workForResetBtn = document.querySelectorAll('.work-for .reset-btn');
-    const breakForResetBtn = document.querySelectorAll(`.break-for .reset-btn`);
-    workForResetBtn.forEach( (node) => {
-        console.log(node);
-        node.addEventListener("mouseup",
-            function(e) {
-                e.stopPropagation; //necessary to prevent callback firing on nested nodes
+    const workForResetBtn = document.querySelector('.work-for .reset-btn');
+    const breakForResetBtn = document.querySelector(`.break-for .reset-btn`);
+    workForResetBtn.addEventListener("click",
+            function() {
                 workForTime = setWorkFor.setToDefault();
-                console.log('reset work timer');
-            }, {capture:true});
-    });
-    breakForResetBtn.forEach( (node) => {
-        node.addEventListener("click", 
-            function(e) {
-                e.stopPropagation; //necessary to prevent callback firing on nested nodes
-                breakForTime = setBreakFor.setToDefault();
-                console.log('reset break timer');
+                console.log(workForTime);
             });
-    });
-    console.log(workForResetBtn);
+    breakForResetBtn.addEventListener("click", 
+            function() {
+                breakForTime = setBreakFor.setToDefault();
+                console.log(breakForTime);
+            });
 };
 timerResetListeners();
 //      increment and decrement buttons
+const workForCrementBtns = document.querySelectorAll(`.work-for .crement > div`);
+console.log(workForCrementBtns);
+
+workForCrementBtns[0].addEventListener("mousedown", 
+    (e) => {
+        workForTime = setWorkFor.incrementMins(workForTime);
+        console.log(this);
+        const intervalId = this.setInterval(() => {workForTime = setWorkFor.incrementMins(workForTime);}, 350);
+    });
 //      start/stop count-down button
 //      reset count-down button
 const countDownResetBtn = document.querySelector('.reset.main-reset');
