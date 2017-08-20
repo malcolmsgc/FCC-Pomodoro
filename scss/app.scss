@@ -13,6 +13,7 @@ body {
     font-size: $base-font-size;
     height: 100vh;
     background-color: $colour-canvas;
+    user-select: none;
 }
 
 @mixin column-wrapper {

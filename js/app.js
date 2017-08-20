@@ -57,6 +57,15 @@ class CountDownTimer {
                     }, 1000); //run every second to update display
     }
 
+    resetCountDown() {
+        this.startCountDown(0);
+        if (this.settings.rolling) {
+            [...this.minsNodes, ...this.secsNodes].forEach( 
+                (slot) => { this._transitionFrames(0, 0, slot); }
+            );
+        }
+    }
+
     _displayCountDown(seconds, {noNeg , padTo, returnAsNum} = {
         noNeg: true,
         padTo: 2,
@@ -173,7 +182,7 @@ class CountDownTimer {
                     }
                 }
                 //transition ones seconds frames
-                if (!this.firstRoll) this._transitionOnesSecSlot(newSecsTop, newSecsBottom, nodeRefs[0]);
+                if (!this.firstRoll) this._transitionOnesSecSlot(newSecsBottom, nodeRefs[0]);
                 // check for 0 value in other frames, transition if nec 
                 // and use recursion to cascade 
                 // from tens second slot to highest time digit
@@ -216,9 +225,9 @@ class CountDownTimer {
         }
     }
     
-    _transitionOnesSecSlot (top, bottom, slotRef) {
+    _transitionOnesSecSlot (bottom, slotRef) {
         const frames = [].concat(slotRef.childNodes[0], slotRef.childNodes[1]);
-        const newFrames = `<span>${bottom}</span><span></span>`;
+        const newFrames = `<span>${bottom}</span><span>${bottom}</span>`;
         frames.forEach(
             (node) => {
                 node.classList.add('rolling');
@@ -303,24 +312,100 @@ class SetTimer {
 /*       ENDOF SETTIMER CLASS       */
 /* -------------------------------- */
 
-//TO-DO NAMESPACE MAIN APP JS -- create pomodoro class with init method
-//  Initialise Control Panel
-//      Work for set time controls
-const workForMins = document.querySelector(".set-timer.work-for .mins");
-const workForSecs = document.querySelector(".set-timer.work-for .secs");
-const setWorkFor = new SetTimer(15, {minsNode: workForMins, secsNode: workForSecs});
-let workForTime = setWorkFor.setToDefault();
-//      Break for set time controls
-const breakForSecs = document.querySelector(".set-timer.break-for .secs");
-const breakForMins = document.querySelector(".set-timer.break-for .mins");
-const setBreakFor = new SetTimer(5, {minsNode: breakForMins, secsNode: breakForSecs});
-let breakForTime = setBreakFor.setToDefault();
-// Add listeners
-//      Quick add buttons
-const quickAddBtnListeners = (selectorSnippet, timeVar, setTimer) => {
-    const allQuickAddBtns = document.querySelectorAll(`.${selectorSnippet} div[data-addmins]`);
-    allQuickAddBtns.forEach(
-        (btn) => { btn.addEventListener("click", 
+
+class Pomodoro extends CountDownTimer {
+
+    constructor(defaultWorkMins, defaultBreakMins){
+        super({rolling: Modernizr.csstransitions});
+        this.defaultWorkMins = defaultWorkMins;
+        this.defaultBreakMins = defaultBreakMins;
+    }
+
+    init() {
+        //  Initialise Control Panel
+        //      Work-for set time controls
+        const workForMins = document.querySelector(".set-timer.work-for .mins");
+        const workForSecs = document.querySelector(".set-timer.work-for .secs");
+        const setWorkFor = new SetTimer(this.defaultWorkMins, {minsNode: workForMins, secsNode: workForSecs});
+        this.workForTime = setWorkFor.setToDefault();
+        //      Break-for set time controls
+        const breakForSecs = document.querySelector(".set-timer.break-for .secs");
+        const breakForMins = document.querySelector(".set-timer.break-for .mins");
+        const setBreakFor = new SetTimer(this.defaultBreakMins, {minsNode: breakForMins, secsNode: breakForSecs});
+        this.breakForTime = setBreakFor.setToDefault();
+        //  Add listeners
+        //          Quick add buttons
+        this._quickAddBtnListeners("work-for", this.workForTime, setWorkFor);
+        this._quickAddBtnListeners("break-for", this.breakForTime, setBreakFor);
+        //      setTimer reset buttons
+        this._timerResetListeners(setWorkFor, setBreakFor);
+        //      increment and decrement buttons
+        const workForCrementBtns = document.querySelectorAll(`.work-for .crement > div`);
+        const breakForCrementBtns = document.querySelectorAll(`.break-for .crement > div`);
+        this.continuousPressId;
+        // --------------------------------------------------------------------------------
+        // TO DO -- REFACTOR THIS. I'M SURE IT CAN BE CLEANER
+        // work-for functions 
+        //  -- all declared as consts
+        // all are arrow funcs so as to be bound to class scope - 'this' keyword relies on it
+        const continuousPressMinsUpWF = () => {
+            this.workForTime = setWorkFor.incrementMins(this.workForTime);
+        },
+        continuousPressMinsDownWF = () => {
+            this.workForTime = setWorkFor.decrementMins(this.workForTime);
+        },
+        continuousPressSecsUpWF = () => {
+            this.workForTime = setWorkFor.incrementSecs(this.workForTime);
+        },
+        continuousPressSecsDownWF = () => {
+            this.workForTime = setWorkFor.decrementSecs(this.workForTime);
+        },
+        // break-for functions
+        //  -- all declared as consts
+        continuousPressMinsUpBF = () => {
+            this.breakForTime = setBreakFor.incrementMins(this.breakForTime);
+        },
+        continuousPressMinsDownBF = () => {
+            this.breakForTime = setBreakFor.decrementMins(this.breakForTime);
+        },
+        continuousPressSecsUpBF = () => {
+            this.breakForTime = setBreakFor.incrementSecs(this.breakForTime);
+        },
+        continuousPressSecsDownBF = () => {
+            this.breakForTime = setBreakFor.decrementSecs(this.breakForTime);
+        };
+        
+        workForCrementBtns[0].addEventListener("mousedown", () => { this._continuousPressCrement(true, continuousPressMinsUpWF); });
+        workForCrementBtns[0].addEventListener("mouseup", () => { this._continuousPressCrement(false, continuousPressMinsUpWF); });
+        workForCrementBtns[1].addEventListener("mousedown", () => { this._continuousPressCrement(true, continuousPressMinsDownWF); });
+        workForCrementBtns[1].addEventListener("mouseup", () => { this._continuousPressCrement(false, continuousPressMinsDownWF); });
+        workForCrementBtns[3].addEventListener("mousedown", () => { this._continuousPressCrement(true, continuousPressSecsUpWF); });
+        workForCrementBtns[3].addEventListener("mouseup", () => { this._continuousPressCrement(false, continuousPressSecsUpWF); });
+        workForCrementBtns[4].addEventListener("mousedown", () => { this._continuousPressCrement(true, continuousPressSecsDownWF); });
+        workForCrementBtns[4].addEventListener("mouseup", () => { this._continuousPressCrement(false, continuousPressSecsDownWF); });
+        breakForCrementBtns[0].addEventListener("mousedown", () => { this._continuousPressCrement(true, continuousPressMinsUpBF); });
+        breakForCrementBtns[0].addEventListener("mouseup", () => { this._continuousPressCrement(false, continuousPressMinsUpBF); });
+        breakForCrementBtns[1].addEventListener("mousedown", () => { this._continuousPressCrement(true, continuousPressMinsDownBF); });
+        breakForCrementBtns[1].addEventListener("mouseup", () => { this._continuousPressCrement(false, continuousPressMinsDownBF); });
+        breakForCrementBtns[3].addEventListener("mousedown", () => { this._continuousPressCrement(true, continuousPressSecsUpBF); });
+        breakForCrementBtns[3].addEventListener("mouseup", () => { this._continuousPressCrement(false, continuousPressSecsUpBF); });
+        breakForCrementBtns[4].addEventListener("mousedown", () => { this._continuousPressCrement(true, continuousPressSecsDownBF); });
+        breakForCrementBtns[4].addEventListener("mouseup", () => { this._continuousPressCrement(false, continuousPressSecsDownBF); });
+        // --------------------------------------------------------------------------------
+        //      start/stop count-down button
+        const startStopBtn = document.querySelector(".count-down-ctrls .main-btn");
+        //TO DO -- WRITE HANDLER for work break cadence and allow pauses
+        startStopBtn.addEventListener("click", () => {this.startCountDown(this.workForTime);} );
+        //      reset count-down button
+        const countDownResetBtn = document.querySelector('.reset.main-reset');
+        countDownResetBtn.addEventListener('click', () => this.resetCountDown() );
+    } 
+    /* -- end of init method -- */
+    
+    _quickAddBtnListeners(selectorSnippet, timeVar, setTimer) {
+        const allQuickAddBtns = document.querySelectorAll(`.${selectorSnippet} div[data-addmins]`);
+        allQuickAddBtns.forEach(
+            (btn) => { btn.addEventListener("click", 
             function(e) {
                 e.stopPropagation;
                 timeVar = setTimer.quickAddMinutes(btn.dataset.addmins, timeVar);
@@ -328,91 +413,35 @@ const quickAddBtnListeners = (selectorSnippet, timeVar, setTimer) => {
             })
         }
     );
-};
-quickAddBtnListeners("work-for", workForTime, setWorkFor);
-quickAddBtnListeners("break-for", breakForTime, setBreakFor);
-//      setTimer reset buttons
-const timerResetListeners = () => {
+}
+
+_timerResetListeners(setWorkFor, setBreakFor) {
     const workForResetBtn = document.querySelector('.work-for .reset-btn');
     const breakForResetBtn = document.querySelector(`.break-for .reset-btn`);
     workForResetBtn.addEventListener("click",
-            function() {
-                workForTime = setWorkFor.setToDefault();
-                console.log(workForTime);
-            });
+    function() { this.workForTime = setWorkFor.setToDefault(); });
     breakForResetBtn.addEventListener("click", 
-            function() {
-                breakForTime = setBreakFor.setToDefault();
-                console.log(breakForTime);
-            });
-};
-timerResetListeners();
-//      increment and decrement buttons
-const workForCrementBtns = document.querySelectorAll(`.work-for .crement > div`);
-const breakForCrementBtns = document.querySelectorAll(`.break-for .crement > div`);
-console.log(workForCrementBtns);
-let continuousPressId;
-// --------------------------------------------------------------------------------
-// TO DO -- REFACTOR THIS. I'M SURE IT CAN BE CLEANER
-// work for functions
-function continuousPressMinsUpWF() {
-    workForTime = setWorkFor.incrementMins(workForTime);
-}
-function continuousPressMinsDownWF() {
-    workForTime = setWorkFor.decrementMins(workForTime);
-}
-function continuousPressSecsUpWF() {
-    workForTime = setWorkFor.incrementSecs(workForTime);
-}
-function continuousPressSecsDownWF() {
-    workForTime = setWorkFor.decrementSecs(workForTime);
-}
-// break for functions
-function continuousPressMinsUpBF() {
-    breakForTime = setBreakFor.incrementMins(breakForTime);
-}
-function continuousPressMinsDownBF() {
-    breakForTime = setBreakFor.decrementMins(breakForTime);
-}
-function continuousPressSecsUpBF() {
-    breakForTime = setBreakFor.incrementSecs(breakForTime);
-}
-function continuousPressSecsDownBF() {
-    breakForTime = setBreakFor.decrementSecs(breakForTime);
+    function() { this.breakForTime = setBreakFor.setToDefault(); });
 }
 
-function keepRunning(keyDown, callback) {
+_continuousPressCrement(keyDown, callback) {
     if (!keyDown) {
-        clearInterval(continuousPressId);
-        continuousPressId = null;
+        clearInterval(this.continuousPressId);
+        this.continuousPressId = null;
     }
     else {
-        if (continuousPressId) return; //prevent two buttons running at same time
+        if (this.continuousPressId) return; //prevent two buttons running at same time
         callback();
-        continuousPressId = setInterval(callback, 325)
+        this.continuousPressId = setInterval(callback, 325)
     }
 }
 
-workForCrementBtns[0].addEventListener("mousedown", () => { keepRunning(true, continuousPressMinsUpWF); });
-workForCrementBtns[0].addEventListener("mouseup", () => { keepRunning(false, continuousPressMinsUpWF); });
-workForCrementBtns[1].addEventListener("mousedown", () => { keepRunning(true, continuousPressMinsDownWF); });
-workForCrementBtns[1].addEventListener("mouseup", () => { keepRunning(false, continuousPressMinsDownWF); });
-workForCrementBtns[3].addEventListener("mousedown", () => { keepRunning(true, continuousPressSecsUpWF); });
-workForCrementBtns[3].addEventListener("mouseup", () => { keepRunning(false, continuousPressSecsUpWF); });
-workForCrementBtns[4].addEventListener("mousedown", () => { keepRunning(true, continuousPressSecsDownWF); });
-workForCrementBtns[4].addEventListener("mouseup", () => { keepRunning(false, continuousPressSecsDownWF); });
-breakForCrementBtns[0].addEventListener("mousedown", () => { keepRunning(true, continuousPressMinsUpBF); });
-breakForCrementBtns[0].addEventListener("mouseup", () => { keepRunning(false, continuousPressMinsUpBF); });
-breakForCrementBtns[1].addEventListener("mousedown", () => { keepRunning(true, continuousPressMinsDownBF); });
-breakForCrementBtns[1].addEventListener("mouseup", () => { keepRunning(false, continuousPressMinsDownBF); });
-breakForCrementBtns[3].addEventListener("mousedown", () => { keepRunning(true, continuousPressSecsUpBF); });
-breakForCrementBtns[3].addEventListener("mouseup", () => { keepRunning(false, continuousPressSecsUpBF); });
-breakForCrementBtns[4].addEventListener("mousedown", () => { keepRunning(true, continuousPressSecsDownBF); });
-breakForCrementBtns[4].addEventListener("mouseup", () => { keepRunning(false, continuousPressSecsDownBF); });
-// --------------------------------------------------------------------------------
-//      start/stop count-down button
-//      reset count-down button
-const countDownResetBtn = document.querySelector('.reset.main-reset');
-countDownResetBtn.addEventListener('click', function(){console.log('main reset')});
-//  Initialise countdown time display
-const pomodoro = (Modernizr.csstransitions) ? new CountDownTimer({rolling: true}) : new CountDownTimer({rolling: false});
+
+}
+
+/* -------------------------------- */
+/*       ENDOF POMODORO CLASS       */
+/* -------------------------------- */
+
+const pomodoro = new Pomodoro(20, 5);
+pomodoro.init();
