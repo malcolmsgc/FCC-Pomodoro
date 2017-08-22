@@ -416,12 +416,13 @@ class Pomodoro extends CountDownTimer {
 }
 
 _timerResetListeners(setWorkFor, setBreakFor) {
+    //internal functions are arrow functions so as to inherit scope from caller
     const workForResetBtn = document.querySelector('.work-for .reset-btn');
     const breakForResetBtn = document.querySelector(`.break-for .reset-btn`);
     workForResetBtn.addEventListener("click",
-    function() { this.workForTime = setWorkFor.setToDefault(); });
+    () => { this.workForTime = setWorkFor.setToDefault(); });
     breakForResetBtn.addEventListener("click", 
-    function() { this.breakForTime = setBreakFor.setToDefault(); });
+    () => { this.breakForTime = setBreakFor.setToDefault(); });
 }
 
 _continuousPressCrement(keyDown, callback) {
