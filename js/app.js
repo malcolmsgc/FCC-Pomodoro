@@ -29,6 +29,7 @@ class CountDownTimer {
 //TO DO - ensure nodes are obtained after num of frames for mins is determined
     startCountDown(secs) {
         clearInterval(this.timerIntervalID);
+        this.countDownFinished = false;
         this.firstRoll = true;
         // if counter doesn't roll, destructure node refs into default vars
         // and pull in nodes held on class object
@@ -51,10 +52,13 @@ class CountDownTimer {
                         const secsRemaining = Math.round((timeAtEnd - Date.now()) / 1000);
                         if (secsRemaining < 0) {
                             clearInterval(this.timerIntervalID);
-                            return;
+                            this.countDownFinished = true;
+                            return false;
                         }
+                        this.sand = secsRemaining;
                         this._displayCountDown(secsRemaining);
                     }, 1000); //run every second to update display
+        return this.sand;
     }
 
     resetCountDown() {
@@ -395,7 +399,8 @@ class Pomodoro extends CountDownTimer {
         //      start/stop count-down button
         const startStopBtn = document.querySelector(".count-down-ctrls .main-btn");
         //TO DO -- WRITE HANDLER for work break cadence and allow pauses
-        startStopBtn.addEventListener("click", () => {this.startCountDown(this.workForTime);} );
+        startStopBtn.addEventListener("click", () => {
+            this._startStop(startStopBtn)} );
         //      reset count-down button
         const countDownResetBtn = document.querySelector('.reset.main-reset');
         countDownResetBtn.addEventListener('click', () => this.resetCountDown() );
@@ -413,6 +418,34 @@ class Pomodoro extends CountDownTimer {
             })
         }
     );
+}
+
+_startStop(btnNode) {
+    console.log(this.workForTime, this.breakForTime);
+    //handle button text
+    if (this.isCountingDown === "null" || this.isCountingDown === "undefined") this.isCountingDown = false;
+    // start countdown cadence
+    // SAND = seconds outstanding of current countdown, regardless of whether work or break time
+    // initialise sand value
+    this.sand = (this.sand) ? this.sand : this.workForTime;
+    if (!this.isCountingDown) {
+        this.startCountDown(this.sand);
+        //const workBreakId = setInterval();
+    }
+    else {
+        //TO DO
+        //time take value of time left in current countdown
+        clearInterval(this.timerIntervalID);
+    }
+    this.isCountingDown = !this.isCountingDown;
+    btnNode.textContent = this.isCountingDown ? "Pause" : "Start";
+}
+
+_workBreakCadence(atWork) {
+    // initialise atWork boolean
+    if (this.atWork === "null" || this.atWork === "undefined") this.atWork = true;
+    if (this.countDownFinished) {this.atWork = !this.atWork};
+
 }
 
 _timerResetListeners(setWorkFor, setBreakFor) {
@@ -444,5 +477,5 @@ _continuousPressCrement(keyDown, callback) {
 /*       ENDOF POMODORO CLASS       */
 /* -------------------------------- */
 
-const pomodoro = new Pomodoro(20, 5);
+const pomodoro = new Pomodoro(1,1);
 pomodoro.init();
