@@ -335,8 +335,8 @@ class Pomodoro extends CountDownTimer {
         this.breakForTime = setBreakFor.setToDefault();
         //  Add listeners
         //          Quick add buttons
-        this._quickAddBtnListeners("work-for", this.workForTime, setWorkFor);
-        this._quickAddBtnListeners("break-for", this.breakForTime, setBreakFor);
+        this._quickAddBtnListeners("work-for", "workForTime", setWorkFor);
+        this._quickAddBtnListeners("break-for", "breakForTime", setBreakFor);
         //      setTimer reset buttons
         this._timerResetListeners(setWorkFor, setBreakFor);
         //      increment and decrement buttons
@@ -402,14 +402,14 @@ class Pomodoro extends CountDownTimer {
     } 
     /* -- end of init method -- */
     
-    _quickAddBtnListeners(selectorSnippet, timeVar, setTimer) {
+    _quickAddBtnListeners(selectorSnippet, timeVarAsStr, setTimer) {
+        //internal functions are arrow functions so as to inherit scope from caller
         const allQuickAddBtns = document.querySelectorAll(`.${selectorSnippet} div[data-addmins]`);
         allQuickAddBtns.forEach(
             (btn) => { btn.addEventListener("click", 
-            function(e) {
+            (e) => {
                 e.stopPropagation;
-                timeVar = setTimer.quickAddMinutes(btn.dataset.addmins, timeVar);
-                console.log(timeVar);
+                this[timeVarAsStr] = setTimer.quickAddMinutes(btn.dataset.addmins, this[timeVarAsStr]);
             })
         }
     );
