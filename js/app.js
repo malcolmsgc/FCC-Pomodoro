@@ -401,7 +401,12 @@ class Pomodoro extends CountDownTimer {
             this._startStop(startStopBtn)} );
         //      reset count-down button
         const countDownResetBtn = document.querySelector('.reset.main-reset');
-        countDownResetBtn.addEventListener('click', () => {this.resetCountDown(); this.sand = null;} );
+        countDownResetBtn.addEventListener('click', () => { 
+            this.resetCountDown(); 
+            this.sand = null;
+            //stop work break cadence
+            clearInterval(this.workBreakIntervalID);
+        } );
     } 
     /* -- end of init method -- */
     
@@ -421,29 +426,43 @@ class Pomodoro extends CountDownTimer {
 _startStop(btnNode) {
     console.log(this.workForTime, this.breakForTime);
     //handle button text
-    if (this.isCountingDown === "null" || this.isCountingDown === "undefined") this.isCountingDown = false;
+    if (this.isCountingDown === null || this.isCountingDown === undefined) this.isCountingDown = false;
     // start countdown cadence
     // SAND = seconds outstanding of current countdown, regardless of whether work or break time
     // initialise sand value
     this.sand = (this.sand) ? this.sand : this.workForTime;
     if (!this.isCountingDown) {
         this.startCountDown(this.sand);
-        //const workBreakId = setInterval();
+        this.workBreakIntervalID = setInterval(() => { this._workBreakCadence() }, 1000);
     }
     else {
-        //TO DO
-        //time take value of time left in current countdown
+        //stop count down
         clearInterval(this.timerIntervalID);
+        //stop work break cadence
+        clearInterval(this.workBreakIntervalID);
     }
     this.isCountingDown = !this.isCountingDown;
     btnNode.textContent = this.isCountingDown ? "Pause" : "Start";
 }
 
-_workBreakCadence(atWork) {
+_workBreakCadence() {
     // initialise atWork boolean
-    if (this.atWork === "null" || this.atWork === "undefined") this.atWork = true;
-    if (this.countDownFinished) {this.atWork = !this.atWork};
-
+    if (this.atWork === null || this.atWork === undefined) this.atWork = true;
+    if (this.countDownFinished) {
+        //swap boolean value
+        this.atWork = !this.atWork; 
+        //reset flag
+        this.countDownFinished = false;
+        if (this.atWork) {
+            console.log("Let's get to work");
+            this.startCountDown(this.workForTime);
+        }
+        else {
+            console.log("Phew, break time!");
+            this.startCountDown(this.breakForTime);
+        }
+    };
+    console.log(this.atWork, this.sand);
 }
 
 _timerResetListeners(setWorkFor, setBreakFor) {
@@ -464,7 +483,7 @@ _continuousPressCrement(keyDown, callback) {
     else {
         if (this.continuousPressId) return; //prevent two buttons running at same time
         callback();
-        this.continuousPressId = setInterval(callback, 325)
+        this.continuousPressId = setInterval(callback, 300)
     }
 }
 
@@ -475,5 +494,5 @@ _continuousPressCrement(keyDown, callback) {
 /*       ENDOF POMODORO CLASS       */
 /* -------------------------------- */
 
-const pomodoro = new Pomodoro(1,1);
+const pomodoro = new Pomodoro(0.2,0.1);
 pomodoro.init();
