@@ -350,7 +350,6 @@ class Pomodoro extends CountDownTimer {
         // --------------------------------------------------------------------------------
         // TO DO -- REFACTOR THIS. I'M SURE IT CAN BE CLEANER
         // work-for functions 
-        //  -- all declared as consts
         // all are arrow funcs so as to be bound to class scope - 'this' keyword relies on it
         const continuousPressMinsUpWF = () => {
             this.workForTime = setWorkFor.incrementMins(this.workForTime);
@@ -398,12 +397,11 @@ class Pomodoro extends CountDownTimer {
         // --------------------------------------------------------------------------------
         //      start/stop count-down button
         const startStopBtn = document.querySelector(".count-down-ctrls .main-btn");
-        //TO DO -- WRITE HANDLER for work break cadence and allow pauses
         startStopBtn.addEventListener("click", () => {
             this._startStop(startStopBtn)} );
         //      reset count-down button
         const countDownResetBtn = document.querySelector('.reset.main-reset');
-        countDownResetBtn.addEventListener('click', () => this.resetCountDown() );
+        countDownResetBtn.addEventListener('click', () => {this.resetCountDown(); this.sand = null;} );
     } 
     /* -- end of init method -- */
     
