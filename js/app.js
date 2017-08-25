@@ -449,6 +449,7 @@ _workBreakCadence() {
     // initialise atWork boolean
     if (this.atWork === null || this.atWork === undefined) this.atWork = true;
     if (this.countDownFinished) {
+        this._playSound();
         //swap boolean value
         this.atWork = !this.atWork; 
         //reset flag
@@ -463,6 +464,12 @@ _workBreakCadence() {
         }
     };
     console.log(this.atWork, this.sand);
+}
+
+_playSound() {
+    //get audio reference
+    const beep = document.querySelector("audio.beep");
+    beep.play();
 }
 
 _timerResetListeners(setWorkFor, setBreakFor) {
