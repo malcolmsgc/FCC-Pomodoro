@@ -407,6 +407,20 @@ class Pomodoro extends CountDownTimer {
             //stop work break cadence
             clearInterval(this.workBreakIntervalID);
         } );
+        // MOBILE UI
+        const setTimers = document.querySelectorAll('.set-timer');
+        setTimers.forEach(
+            (timer) => { timer.addEventListener("click", 
+                function() {
+                    console.log("open!");
+                    if (timer.classList.contains("open")) return;
+                    else {
+                        timer.classList.add("opening");
+                        window.setTimeout(() => {timer.classList.add("open")}, 50);
+                    }
+                });
+            }
+        );
     } 
     /* -- end of init method -- */
     

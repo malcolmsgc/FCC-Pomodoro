@@ -20,13 +20,28 @@
             font-size: 3em;
         }
         .btn-row {
+            transition: all 0.4s ease-in-out;
             display: none;
+            font-size: 0em;
+            visibility: hidden;
         }
-        &.open {
+        &.opening {
             .btn-row {
                 display: flex;
             }
         }
+        &.open {
+            .btn-row {
+                visibility: visible;
+                font-size: 1em;
+            }
+        }
+    }
+}
+
+@mixin timer-display-phone {
+    div.count-down {
+        font-size: 7.5em;
     }
 }
     

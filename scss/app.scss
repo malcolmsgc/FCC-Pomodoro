@@ -69,4 +69,5 @@ footer {
 @media (max-width: 593px) {
  @include phoneheader;
  @include set-time-ctrls-phone;
+ @include timer-display-phone;
 }
