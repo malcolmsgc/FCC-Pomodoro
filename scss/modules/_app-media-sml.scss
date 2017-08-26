@@ -15,6 +15,7 @@
 @mixin set-time-ctrls-phone {
     .set-timer {
         margin: 1.5em 0 0 0;
+        font-size: 0.8em;
         h3 {
             font-weight: normal;
             font-size: 3em;
@@ -40,6 +41,16 @@
 @mixin timer-display-phone {
     div.count-down {
         font-size: 7.5em;
+    }
+}
+@mixin timer-msg-phone {
+    #timer-msg {
+        font-size: 2em;
+        p {
+            margin-bottom: -20px;
+            margin-top: 25px;
+        }
+       
     }
 }
     

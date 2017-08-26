@@ -55,6 +55,20 @@ footer {
     }
 }
 
+ #timer-msg {
+     font-family: $font-stack-3;
+     font-size: 2.5em;
+     color: $colour-lightgrey;
+     letter-spacing: 0.05em;
+     p {
+         font-size: 0em;
+         transition: font-size 0.5s linear;
+         &.open {
+             font-size: 1em;
+         }
+     }
+ }
+
 .ctrl-panel {
     display: inline-flex;
     flex-flow: row wrap;
@@ -74,4 +88,6 @@ footer {
  @include phoneheader;
  @include set-time-ctrls-phone;
  @include timer-display-phone;
+ @include timer-msg-phone;
+
 }

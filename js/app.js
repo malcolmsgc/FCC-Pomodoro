@@ -406,6 +406,8 @@ class Pomodoro extends CountDownTimer {
             this.sand = null;
             //stop work break cadence
             clearInterval(this.workBreakIntervalID);
+            //remove timer message
+            document.querySelectorAll('#timer-msg p').forEach( (para) => {para.classList.remove("open")} );
         } );
         // MOBILE UI
         //  hide timer controls
@@ -453,6 +455,7 @@ class Pomodoro extends CountDownTimer {
 _startStop(btnNode) {
     console.log(this.workForTime, this.breakForTime);
     const setTimers = document.querySelectorAll('.set-timer');
+    const timerMsgSection = document.querySelector('#timer-msg');
     //handle button text
     if (this.isCountingDown === null || this.isCountingDown === undefined) this.isCountingDown = false;
     // start countdown cadence
@@ -466,7 +469,10 @@ _startStop(btnNode) {
             }  
         );
         this.startCountDown(this.sand);
-        this.workBreakIntervalID = setInterval(() => { this._workBreakCadence() }, 1000);
+        this.workBreakIntervalID = setInterval((timerMsgSection) => { this._workBreakCadence(timerMsgSection) }, 1000);
+        //add timer message
+        timerMsgSection.innerHTML = "<p>Time left in this pomodoro:</p>";
+        timerMsgSection.querySelectorAll('p').forEach( (para) => {para.classList.add("open")} );
     }
     else {
         //stop count down
@@ -478,7 +484,7 @@ _startStop(btnNode) {
     btnNode.textContent = this.isCountingDown ? "Pause" : "Start";
 }
 
-_workBreakCadence() {
+_workBreakCadence(msgSection) {
     // initialise atWork boolean
     if (this.atWork === null || this.atWork === undefined) this.atWork = true;
     if (this.countDownFinished) {
@@ -490,10 +496,12 @@ _workBreakCadence() {
         if (this.atWork) {
             console.log("Let's get to work");
             this.startCountDown(this.workForTime);
+            msgSection.innerHTML = "<p>Time left in this pomodoro:</p>";
         }
         else {
             console.log("Phew, break time!");
             this.startCountDown(this.breakForTime);
+            msgSection.innerHTML = "<p>Time left in this break:</p>";
         }
     };
     console.log(this.atWork, this.sand);
