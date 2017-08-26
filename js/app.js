@@ -411,10 +411,9 @@ class Pomodoro extends CountDownTimer {
             //stop work break cadence
             clearInterval(this.workBreakIntervalID);
             //remove timer message
-            const timerMsg = document.querySelector('#timer-msg');
-            timerMsgSection.innerHTML = "";
-            timerMsg.querySelectorAll('p').forEach( (para) => {para.classList.remove("open")} );
-            timerMsg.innerHTML = "<p>Time left in this pomodoro:</p>";
+            const timerMsgSection = document.querySelector('#timer-msg');
+            timerMsgSection.querySelectorAll('p').forEach( (para) => {para.classList.remove("open")} );
+            setTimeout( (timerMsgSection) => {timerMsgSection.innerHTML = "<p>Time left in this pomodoro:</p>"}, 500, timerMsgSection );
             //reset pomodoros counter
             this.numPomodoros = 0;
             // remove hinting (border highlight) on active timer
@@ -467,7 +466,8 @@ class Pomodoro extends CountDownTimer {
 
 _startStop(btnNode) {
     console.log(this.workForTime, this.breakForTime);
-    const setTimers = document.querySelectorAll('.set-timer');
+    const workForTimer = document.querySelector('.set-timer.work-for');
+    const breakForTimer = document.querySelector('.set-timer.break-for');
     const timerMsgSection = document.querySelector('#timer-msg');
     //handle button text
     if (this.isCountingDown === null || this.isCountingDown === undefined) this.isCountingDown = false;
@@ -476,18 +476,20 @@ _startStop(btnNode) {
     // initialise sand value
     this.sand = (this.sand) ? this.sand : this.workForTime;
     if (!this.isCountingDown) {
-        setTimers.forEach(
+        [workForTimer, breakForTimer].forEach(
             (timer) => { 
                 if (timer.classList.contains("open")) { timer.classList.remove("open") }
             }  
         );
         this.startCountDown(this.sand);
         this.numPomodoros = 1;
-        this.workBreakIntervalID = setInterval((timerMsgSection) => { this._workBreakCadence(timerMsgSection) }, 1000, timerMsgSection);
+        this.workBreakIntervalID = setInterval(() => { this._workBreakCadence(timerMsgSection, {workForTimer, breakForTimer}) }, 1000,
+                                                                                    timerMsgSection,
+                                                                                    {workForTimer, breakForTimer} );
         //expand timer message
         timerMsgSection.querySelectorAll('p').forEach( (para) => {para.classList.add("open")} );
         //add active timer hint
-        console.log(setTimers);
+        workForTimer.classList.add("active");
     }
     else {
         //stop count down
@@ -499,7 +501,8 @@ _startStop(btnNode) {
     btnNode.textContent = this.isCountingDown ? "Pause" : "Start";
 }
 
-_workBreakCadence(msgSection) {
+_workBreakCadence(msgSection, {workForTimer, breakForTimer}) {
+    console.log(workForTimer);
     // initialise atWork boolean
     if (this.atWork === null || this.atWork === undefined) this.atWork = true;
     if (this.countDownFinished) {
@@ -513,20 +516,26 @@ _workBreakCadence(msgSection) {
             this.numPomodoros++;
             this.startCountDown(this.workForTime);
             msgSection.innerHTML = "<p class='open'>Time left in this pomodoro:</p>";
-
+            breakForTimer.classList.remove("active");
+            workForTimer.classList.add("active");
         }
         else {
+            //prompt user to take longer break after 4 pomodoros
+            //length based on mulitplier applied to normal break time. 
+            //Could be extended to allow user to choose multiplier in a settings panel
+            console.log("Phew, break time!");
             if (this.numPomodoros >= 4) {
                 if (window.confirm("That's been 4 pomodoros. Do you want to take a longer break?")) { 
                     this.startCountDown(this.breakForTime * this.longBreakMultiplier);
-                  }
+                }
                 this.numPomodoros = 0;
             }
             else {
-                console.log("Phew, break time!");
                 this.startCountDown(this.breakForTime);
-                msgSection.innerHTML = "<p class='open'>Time left in this break:</p>";
             }
+            msgSection.innerHTML = "<p class='open'>Time left in this break:</p>";
+            workForTimer.classList.remove("active");
+            breakForTimer.classList.add("active");
         }
     };
     console.log(this.atWork, this.sand);
