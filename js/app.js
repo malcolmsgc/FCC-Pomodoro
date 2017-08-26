@@ -442,7 +442,6 @@ class Pomodoro extends CountDownTimer {
                     }
                     if (this.isCountingDown) {
                         userInputTimeout = setTimeout( () => timer.classList.remove("open"), 5500);
-                        console.log({userInputTimeout});
                     }
                 });
             }
@@ -502,7 +501,6 @@ _startStop(btnNode) {
 }
 
 _workBreakCadence(msgSection, {workForTimer, breakForTimer}) {
-    console.log(workForTimer);
     // initialise atWork boolean
     if (this.atWork === null || this.atWork === undefined) this.atWork = true;
     if (this.countDownFinished) {
@@ -524,10 +522,13 @@ _workBreakCadence(msgSection, {workForTimer, breakForTimer}) {
             //length based on mulitplier applied to normal break time. 
             //Could be extended to allow user to choose multiplier in a settings panel
             console.log("Phew, break time!");
+            let breakLength = this.breakForTime;
             if (this.numPomodoros >= 4) {
-                if (window.confirm("That's been 4 pomodoros. Do you want to take a longer break?")) { 
-                    this.startCountDown(this.breakForTime * this.longBreakMultiplier);
+                if (window.confirm("That's been 4 pomodoros. Do you want to take a longer break?")) {
+                    breakLength = this.breakForTime * this.longBreakMultiplier);
                 }
+                this.startCountDown(breakLength);
+                //reset pomodoro count
                 this.numPomodoros = 0;
             }
             else {
@@ -538,7 +539,6 @@ _workBreakCadence(msgSection, {workForTimer, breakForTimer}) {
             breakForTimer.classList.add("active");
         }
     };
-    console.log(this.atWork, this.sand);
 }
 
 _playSound() {
