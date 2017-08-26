@@ -21,15 +21,13 @@
         }
         .btn-row {
             transition: all 0.4s ease-in-out;
-            display: none;
             font-size: 0em;
             visibility: hidden;
         }
-        &.opening {
-            .btn-row {
-                display: flex;
-            }
-        }
+        // &.opening {
+        //     .btn-row {
+        //     }
+        // }
         &.open {
             .btn-row {
                 visibility: visible;

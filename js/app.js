@@ -408,37 +408,50 @@ class Pomodoro extends CountDownTimer {
             clearInterval(this.workBreakIntervalID);
         } );
         // MOBILE UI
+        //  hide timer controls
         const setTimers = document.querySelectorAll('.set-timer');
+        let userInputTimeout = null;
         setTimers.forEach(
             (timer) => { timer.addEventListener("click", 
-                function() {
-                    console.log("open!");
-                    if (timer.classList.contains("open")) return;
+                (e) => {
+                    e.stopPropagation;
+                    if (timer.classList.contains("open")) {
+                        if (userInputTimeout) {
+                            clearTimeout(userInputTimeout);
+                            userInputTimeout = setTimeout( () => timer.classList.remove("open"), 5000);
+                        }
+                        return;
+                    }
                     else {
-                        timer.classList.add("opening");
-                        window.setTimeout(() => {timer.classList.add("open")}, 50);
+                        timer.classList.add("open");
+                    }
+                    if (this.isCountingDown) {
+                        userInputTimeout = setTimeout( () => timer.classList.remove("open"), 5500);
+                        console.log({userInputTimeout});
                     }
                 });
             }
         );
-    } 
+    }
     /* -- end of init method -- */
+
     
     _quickAddBtnListeners(selectorSnippet, timeVarAsStr, setTimer) {
         //internal functions are arrow functions so as to inherit scope from caller
         const allQuickAddBtns = document.querySelectorAll(`.${selectorSnippet} div[data-addmins]`);
         allQuickAddBtns.forEach(
-            (btn) => { btn.addEventListener("click", 
+            (btn) => { btn.addEventListener("click",
             (e) => {
                 e.stopPropagation;
                 this[timeVarAsStr] = setTimer.quickAddMinutes(btn.dataset.addmins, this[timeVarAsStr]);
-            })
+            }, {capture : false })
         }
     );
 }
 
 _startStop(btnNode) {
     console.log(this.workForTime, this.breakForTime);
+    const setTimers = document.querySelectorAll('.set-timer');
     //handle button text
     if (this.isCountingDown === null || this.isCountingDown === undefined) this.isCountingDown = false;
     // start countdown cadence
@@ -446,6 +459,11 @@ _startStop(btnNode) {
     // initialise sand value
     this.sand = (this.sand) ? this.sand : this.workForTime;
     if (!this.isCountingDown) {
+        setTimers.forEach(
+            (timer) => { 
+                if (timer.classList.contains("open")) { timer.classList.remove("open") }
+            }  
+        );
         this.startCountDown(this.sand);
         this.workBreakIntervalID = setInterval(() => { this._workBreakCadence() }, 1000);
     }
