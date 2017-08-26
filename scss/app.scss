@@ -48,6 +48,10 @@ footer {
         p {
             color: $colour-lightgrey;
         }
+        a {
+            text-decoration: none;
+            color: $colour-accent2;
+        }
     }
 }
 

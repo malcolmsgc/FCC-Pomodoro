@@ -416,9 +416,10 @@ class Pomodoro extends CountDownTimer {
                 (e) => {
                     e.stopPropagation;
                     if (timer.classList.contains("open")) {
-                        if (userInputTimeout) {
+                        // extend timeout to collapse controls when counter running
+                        if (userInputTimeout && this.isCountingDown) {
                             clearTimeout(userInputTimeout);
-                            userInputTimeout = setTimeout( () => timer.classList.remove("open"), 5000);
+                            userInputTimeout = setTimeout( () => timer.classList.remove("open"), 5500);
                         }
                         return;
                     }
