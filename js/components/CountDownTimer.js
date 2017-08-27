@@ -25,6 +25,7 @@ class CountDownTimer {
     //TO DO - ensure nodes are obtained after num of frames for mins is determined
         startCountDown(secs) {
             clearInterval(this.timerIntervalID);
+            this.countDownFinished = false;
             this.firstRoll = true;
             // if counter doesn't roll, destructure node refs into default vars
             // and pull in nodes held on class object
@@ -47,10 +48,22 @@ class CountDownTimer {
                             const secsRemaining = Math.round((timeAtEnd - Date.now()) / 1000);
                             if (secsRemaining < 0) {
                                 clearInterval(this.timerIntervalID);
-                                return;
+                                this.countDownFinished = true;
+                                return false;
                             }
+                            this.sand = secsRemaining;
                             this._displayCountDown(secsRemaining);
                         }, 1000); //run every second to update display
+            return this.sand;
+        }
+    
+        resetCountDown() {
+            this.startCountDown(0);
+            if (this.settings.rolling) {
+                [...this.minsNodes, ...this.secsNodes].forEach( 
+                    (slot) => { this._transitionFrames(0, 0, slot); }
+                );
+            }
         }
     
         _displayCountDown(seconds, {noNeg , padTo, returnAsNum} = {
@@ -169,7 +182,7 @@ class CountDownTimer {
                         }
                     }
                     //transition ones seconds frames
-                    if (!this.firstRoll) this._transitionOnesSecSlot(newSecsTop, newSecsBottom, nodeRefs[0]);
+                    if (!this.firstRoll) this._transitionOnesSecSlot(newSecsBottom, nodeRefs[0]);
                     // check for 0 value in other frames, transition if nec 
                     // and use recursion to cascade 
                     // from tens second slot to highest time digit
@@ -212,9 +225,9 @@ class CountDownTimer {
             }
         }
         
-        _transitionOnesSecSlot (top, bottom, slotRef) {
+        _transitionOnesSecSlot (bottom, slotRef) {
             const frames = [].concat(slotRef.childNodes[0], slotRef.childNodes[1]);
-            const newFrames = `<span>${bottom}</span><span></span>`;
+            const newFrames = `<span>${bottom}</span><span>${bottom}</span>`;
             frames.forEach(
                 (node) => {
                     node.classList.add('rolling');
@@ -235,3 +248,5 @@ class CountDownTimer {
         }
     
     }
+
+export default CountDownTimer;
