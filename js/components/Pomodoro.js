@@ -3,7 +3,7 @@ import SetTimer from "./SetTimer";
 
 class Pomodoro extends CountDownTimer {
     
-        constructor(defaultWorkMins, defaultBreakMins){
+        constructor(defaultWorkMins, defaultBreakMins) {
             super({rolling: Modernizr.csstransitions});
             this.defaultWorkMins = defaultWorkMins;
             this.defaultBreakMins = defaultBreakMins;

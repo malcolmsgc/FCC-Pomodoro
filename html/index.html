@@ -6,12 +6,10 @@
         <title>Pomodoro Timer ⏰</title>
         <meta name="description" content="Pomodoro timer -- set a work and break cadence">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link rel="icon" type="image/png" sizes="32x32" href="../assets//favicons/favicon-32x32.png">
-        <link rel="apple-touch-icon" sizes="180x180" href="../assets//favicons/apple-icon-180x180.png">
-        <link rel="icon" type="image/png" sizes="192x192"  href="../assets//favicons/android-icon-192x192.png">
-        <link rel="stylesheet" href="../css/normalize.css">
-        <link rel="stylesheet" href="../css/app.css">
-        <script src="../js/vendor/modernizr-2.8.3.min.js"></script>
+        <link rel="icon" type="image/png" sizes="32x32" href=<%=require("../assets//favicons/favicon-32x32.png")%> >
+        <link rel="apple-touch-icon" sizes="180x180" href=<%=require("../assets//favicons/apple-icon-180x180.png")%> >
+        <link rel="icon" type="image/png" sizes="192x192"  href=<%=require("../assets//favicons/android-icon-192x192.png")%> >
+        <script src=<%=require("../js/vendor/modernizr-2.8.3.min.js")%> ></script>
     </head>
     
     <body>
@@ -55,7 +53,7 @@
                             <div data-addmins="5">5</div>
                             <div data-addmins="10">10</div>
                             <div class="reset-btn">
-                                <img class="reset set-timer-reset" src="../assets/reset-icon.svg" alt="X"/>
+                                <img class="reset set-timer-reset" src=<%= require("../assets/reset-icon.svg") %> alt="X"/>
                             </div>
                         </div>
                     </div>
@@ -89,7 +87,7 @@
                             <div data-addmins="5">5</div>
                             <div data-addmins="10">10</div>
                             <div class="reset-btn">
-                                <img class="reset set-timer-reset" src="../assets/reset-icon.svg" alt="X"/>
+                                <img class="reset set-timer-reset" src=<%=require("../assets/reset-icon.svg")%> alt="X"/>
                             </div>
                         </div>
                     </div>
@@ -110,7 +108,7 @@
             <!-- FLEX CONTAINER ROW -->
             <section class="count-down-ctrls">
                 <div class="btn main-btn">Start</div>
-                <img class="reset main-reset" src="../assets/reset-counter.svg" alt="Reset"/>
+                <img class="reset main-reset" src=<%= require("../assets/reset-counter.svg") %> alt="Reset"/>
             </section>
         </main>
         <!-- FLEX CHILD OF BODY -->
@@ -121,10 +119,8 @@
                     <p>Icons by <strong>Mooms</strong> and <strong>Setyo Ari Wibowo</strong> sourced from The Noun Project</p>
             </details>
         </footer>
-        <!--<script src="js/plugins.js"></script>-->
-        <script src="../js/app.js"></script>
-
         <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
+        <audio class="beep" src=<%=require("../assets/sounds/beep-beep.wav")%> type="audio/wav"></audio>
         <script>
             (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
             function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
@@ -133,6 +129,5 @@
             r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
             ga('create','UA-XXXXX-X','auto');ga('send','pageview');
         </script>
-        <audio class="beep" src="../assets/sounds/beep-beep.wav" type="audio/wav"></audio>
     </body>
 </html>
