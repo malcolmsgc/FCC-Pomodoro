@@ -10,6 +10,13 @@
         <link rel="apple-touch-icon" sizes="180x180" href=<%=require("../assets//favicons/apple-icon-180x180.png")%> >
         <link rel="icon" type="image/png" sizes="192x192"  href=<%=require("../assets//favicons/android-icon-192x192.png")%> >
         <script src=<%=require("../js/vendor/modernizr-2.8.3.min.js")%> ></script>
+        <!-- Google Tag Manager -->
+        <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+            new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+            j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+            'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','GTM-PLMBDVL');</script>
+        <!-- End Google Tag Manager -->
     </head>
     
     <body>
@@ -116,18 +123,22 @@
             <details>
                 <summary>©️ 2017</summary>
                     <p>Built by <strong><a href="https://twitter.com/MalcolmCumming" target="blank" title="Find me on Twitter">@MalcolmCumming</a></strong></p>
-                    <p>Icons by <strong>Mooms</strong> and <strong>Setyo Ari Wibowo</strong> sourced from The Noun Project</p>
+                    <p>Reset icon by <strong>Mooms</strong> sourced from The Noun Project</p>
             </details>
         </footer>
         <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
         <audio class="beep" src=<%=require("../assets/sounds/beep-beep.wav")%> type="audio/wav"></audio>
         <script>
-            (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
-            function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
-            e=o.createElement(i);r=o.getElementsByTagName(i)[0];
-            e.src='https://www.google-analytics.com/analytics.js';
-            r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
-            ga('create','UA-XXXXX-X','auto');ga('send','pageview');
+            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+            m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+            })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+            ga('create', 'UA-105732466-1', 'auto');
+            ga('send', 'pageview');
         </script>
+          <!-- Google Tag Manager (noscript) -->
+        <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-PLMBDVL"
+            height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+            <!-- End Google Tag Manager (noscript) -->
     </body>
 </html>

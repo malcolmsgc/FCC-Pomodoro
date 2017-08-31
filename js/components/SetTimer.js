@@ -1,9 +1,10 @@
 class SetTimer {
     
-        constructor(defaultInMins, { minsNode, secsNode } = {}) {
+        constructor(defaultInMins, { minsNode, secsNode } = {}, ceilingInSecs) {
             this.defaultInSecs = Math.round(defaultInMins * 60);
             this.secsNode = secsNode;
             this.minsNode = minsNode;
+            this.ceilingInSecs = ceilingInSecs;
         }
     
         displayTime(totalSecs = this.defaultInSecs) {
@@ -15,16 +16,19 @@ class SetTimer {
         }
     
         incrementSecs(totalSecs){
-            return this.displayTime(++totalSecs);
+            const updatedSecs = (++totalSecs > this.ceilingInSecs) ? this.ceilingInSecs : totalSecs;
+            return this.displayTime(updatedSecs);
         }
         
         decrementSecs(totalSecs){
             if (totalSecs > 0) return this.displayTime(--totalSecs);
             else return totalSecs;
         }
-    
+        
         incrementMins(totalSecs){
-            return this.displayTime(totalSecs + 60);
+            const afterCalc = totalSecs + 60;
+            const updatedSecs = (afterCalc > this.ceilingInSecs) ? this.ceilingInSecs : afterCalc;
+            return this.displayTime(updatedSecs);
         }
         
         decrementMins(totalSecs){
@@ -34,7 +38,9 @@ class SetTimer {
         }
     
         quickAddMinutes(minsToAdd, totalSecs) {
-            return this.displayTime(totalSecs + (minsToAdd * 60));
+            const afterCalc = (totalSecs + (minsToAdd * 60));
+            const updatedSecs = (afterCalc > this.ceilingInSecs) ? this.ceilingInSecs : afterCalc;
+            return this.displayTime(updatedSecs);
         }
     
         setToDefault() {

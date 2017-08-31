@@ -214,7 +214,6 @@ class CountDownTimer {
                 //transition frames on next highest slot
                 // index offset by two to match non-zero index of timeslot
                 const {timeTop, timeBottom, parentNode} = transitionObject[`timeslot${index+2}`];
-                console.log ({timeTop, timeBottom, parentNode});
                 this._transitionFrames(timeTop, timeBottom, parentNode);
                 console.log(`rolling slot ${index + 2}`);
                 //stop transition at highest slot

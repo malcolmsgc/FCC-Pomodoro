@@ -1,0 +1,38 @@
+{
+  "name": "pomodoro",
+  "version": "1.0.0",
+  "description": "Pomodoro timer app",
+  "main": "index.js",
+  "scripts": {
+    "build-css": "node-sass --include-path scss src/scss/app.scss src/css/app.css",
+    "sass-watch": "node-sass -w src/scss/app.scss -o src/css/",
+    "build": "rimraf dist && NODE_ENV=production webpack -p",
+    "start": "webpack-dev-server",
+    "dev": "webpack -d --watch"
+  },
+  "author": "Malcolm Cumming",
+  "license": "ISC",
+  "devDependencies": {
+    "autoprefixer": "^7.1.3",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-es2015": "^6.24.1",
+    "css-loader": "^0.28.5",
+    "extract-text-webpack-plugin": "^3.0.0",
+    "file-loader": "^0.11.2",
+    "html-webpack-plugin": "^2.30.1",
+    "image-webpack-loader": "^3.3.1",
+    "modernizr-webpack-plugin": "^1.0.6",
+    "node-sass": "^4.5.3",
+    "postcss-loader": "^2.0.6",
+    "rimraf": "^2.6.1",
+    "sass-loader": "^6.0.6",
+    "style-loader": "^0.18.2",
+    "webpack": "^3.4.1",
+    "webpack-dev-server": "^2.7.1"
+  },
+  "dependencies": {
+    "normalize.css": "^7.0.0"
+  }
+}

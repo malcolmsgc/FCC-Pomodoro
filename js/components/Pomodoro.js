@@ -3,11 +3,12 @@ import SetTimer from "./SetTimer";
 
 class Pomodoro extends CountDownTimer {
     
-        constructor(defaultWorkMins, defaultBreakMins) {
-            super({rolling: Modernizr.csstransitions});
+        constructor(defaultWorkMins, defaultBreakMins, ceilingInSecs) {
+            super({rolling: Modernizr.csstransitions || false});
             this.defaultWorkMins = defaultWorkMins;
             this.defaultBreakMins = defaultBreakMins;
-            this.longBreakMultiplier = 2;
+            this.longBreakMultiplier = 3;
+            this.ceilingInSecs = ceilingInSecs;
         }
     
         init() {
@@ -15,12 +16,12 @@ class Pomodoro extends CountDownTimer {
             //      Work-for set time controls
             const workForMins = document.querySelector(".set-timer.work-for .mins");
             const workForSecs = document.querySelector(".set-timer.work-for .secs");
-            const setWorkFor = new SetTimer(this.defaultWorkMins, {minsNode: workForMins, secsNode: workForSecs});
+            const setWorkFor = new SetTimer(this.defaultWorkMins, {minsNode: workForMins, secsNode: workForSecs}, this.ceilingInSecs);
             this.workForTime = setWorkFor.setToDefault();
             //      Break-for set time controls
             const breakForSecs = document.querySelector(".set-timer.break-for .secs");
             const breakForMins = document.querySelector(".set-timer.break-for .mins");
-            const setBreakFor = new SetTimer(this.defaultBreakMins, {minsNode: breakForMins, secsNode: breakForSecs});
+            const setBreakFor = new SetTimer(this.defaultBreakMins, {minsNode: breakForMins, secsNode: breakForSecs}, this.ceilingInSecs);
             this.breakForTime = setBreakFor.setToDefault();
             //  Add listeners
             //          Quick add buttons
@@ -148,7 +149,7 @@ class Pomodoro extends CountDownTimer {
     }
     
     _startStop(btnNode) {
-        console.log(this.workForTime, this.breakForTime);
+        console.log(`Work: ${this.workForTime}s Break: ${this.breakForTime}s`);
         const workForTimer = document.querySelector('.set-timer.work-for');
         const breakForTimer = document.querySelector('.set-timer.break-for');
         const timerMsgSection = document.querySelector('#timer-msg');
@@ -209,7 +210,9 @@ class Pomodoro extends CountDownTimer {
                 let breakLength = this.breakForTime;
                 if (this.numPomodoros >= 4) {
                     if (window.confirm("That's been 4 pomodoros. Do you want to take a longer break?")) {
-                        breakLength = this.breakForTime * this.longBreakMultiplier;
+                        breakLength = (this.breakForTime * this.longBreakMultiplier) > this.ceilingInSecs ?
+                            this.ceilingInSecs : this.breakForTime * this.longBreakMultiplier;
+                            console.log(breakLength);
                     }
                     this.startCountDown(breakLength);
                     //reset pomodoro count
